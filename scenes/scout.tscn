@@ -1,6 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://ddccdyjmwdyuo"]
+[gd_scene load_steps=4 format=3 uid="uid://ddccdyjmwdyuo"]
 
 [ext_resource type="Script" path="res://src/Scout.cs" id="1_dl0jy"]
 
-[node name="Scout" type="CharacterBody2D"]
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_do224"]
+size = Vector2(16, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nencr"]
+size = Vector2(16, 16)
+
+[node name="Scout" type="Area2D"]
 script = ExtResource("1_dl0jy")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("PlaceholderTexture2D_do224")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_nencr")
