@@ -16,17 +16,27 @@ public partial class Game : Node2D
     [Export]
     public Texture2D SpriteRightwardThrust;
 
-    List<int> spawnedScouts;
+    public Main MainRef;
 
-    Cam cam;
+    List<long> _spawnedScouts;
+
+    Node2D _bullets;
+    Cam _cam;
 
     public override void _Ready()
     {
-        spawnedScouts = new List<int>();
-        cam = GetNode<Cam>("Camera2D");
+        _spawnedScouts = new List<long>();
+        _cam = GetNode<Cam>("Camera2D");
+
+        _bullets = GetNode<Node2D>("Bullets");
     }
 
-    public void SpawnScount(int id)
+    public void Instantiate(Main main)
+    {
+        MainRef = main;
+    }
+
+    public void SpawnScout(long id)
     {
         Scout scout = ScoutScene.Instantiate<Scout>();
         scout.Name = id.ToString();
@@ -36,17 +46,19 @@ public partial class Game : Node2D
         scout.SpriteRightwardThrust = SpriteRightwardThrust;
         scout.SpriteLeftwardThrust = SpriteLeftwardThrust;
 
+        scout.Instantiate(this);
+
         if (id == Multiplayer.GetUniqueId())
         {
-            cam.Target = scout;
+            _cam.Target = scout;
         }
 
-        spawnedScouts.Add(id);
+        _spawnedScouts.Add(id);
 
         AddChild(scout);
     }
 
-    public bool RemoveScout(int id)
+    public bool RemoveScout(long id)
     {
         var children = GetChildren();
         foreach (var child in children)
@@ -54,11 +66,21 @@ public partial class Game : Node2D
             if (child.Name == id.ToString())
             {
                 child.QueueFree();
-                spawnedScouts.Remove(id);
+                _spawnedScouts.Remove(id);
                 return true;
             }
         }
 
         return false;
+    }
+
+    public void SpawnScoutBullet(Vector2 position, Vector2 velocity)
+    {
+        var bullet = BulletScene.Instantiate<ScoutBullet>();
+        bullet.Position = position;
+        bullet.Velocity = velocity;
+        bullet.Rotation = velocity.Angle();
+
+        _bullets.AddChild(bullet);
     }
 }

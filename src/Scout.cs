@@ -25,13 +25,18 @@ public partial class Scout : Area2D
     public Texture2D SpriteLeftwardThrust;
     public Texture2D SpriteRightwardThrust;
 
+    [Export]
+    public bool ThrustForward = false;
+    [Export]
+    public bool ThrustBackward = false;
+    [Export]
+    public bool ThrustRight = false;
+    [Export]
+    public bool ThrustLeft = false;
+
     static Vector2 NearZero = Vector2.One * 5.0f;
 
     Vector2 _velocity;
-    bool _thrustForward = false;
-    bool _thrustBackward = false;
-    bool _thrustRight = false;
-    bool _thrustLeft = false;
 
     GravityWell _gravityWell = null;
 
@@ -40,8 +45,6 @@ public partial class Scout : Area2D
     Vector2 _displayVec3 = Vector2.Zero;
     Vector2 _displayVec4 = Vector2.Zero;
 
-    bool _debugValue;
-
     Timer _shootTimer;
     bool _shooting = false;
 
@@ -49,11 +52,11 @@ public partial class Scout : Area2D
 
     MultiplayerSynchronizer _multiplayer;
 
+    Game _game = null;
+
     public override void _Ready()
     {
         _velocity = Vector2.Zero;
-
-        _debugValue = true;
 
         _shootTimer = GetNode<Timer>("ShootTimer");
         _shootTimer.OneShot = true;
@@ -70,22 +73,27 @@ public partial class Scout : Area2D
         _multiplayer.SetMultiplayerAuthority(int.Parse(Name));
     }
 
+    public void Instantiate(Game game)
+    {
+        _game = game;
+    }
+
     public override void _Draw()
     {
         var offset = new Vector2(-16, -12);
-        if (_thrustForward)
+        if (ThrustForward)
         {
             DrawTexture(SpriteForwardThrust, offset);
         }
-        if (_thrustBackward)
+        if (ThrustBackward)
         {
             DrawTexture(SpriteBackwardThrust, offset);
         }
-        if (_thrustRight)
+        if (ThrustRight)
         {
             DrawTexture(SpriteRightwardThrust, offset);
         }
-        if (_thrustLeft)
+        if (ThrustLeft)
         {
             DrawTexture(SpriteLeftwardThrust, offset);
         }
@@ -94,11 +102,11 @@ public partial class Scout : Area2D
     public override void _Process(double delta)
     {
         // put this somewhere better
-        if (_thrustForward && !_backBoost.Emitting)
+        if (ThrustForward && !_backBoost.Emitting)
         {
             _backBoost.Emitting = true;
         }
-        else if (!_thrustForward && _backBoost.Emitting)
+        else if (!ThrustForward && _backBoost.Emitting)
         {
             _backBoost.Emitting = false;
         }
@@ -106,21 +114,14 @@ public partial class Scout : Area2D
 
     public override void _PhysicsProcess(double delta)
     {
+        QueueRedraw();
+
         if (_multiplayer.GetMultiplayerAuthority() != Multiplayer.GetUniqueId())
         {
             return;
         }
 
         float dt = (float)delta;
-
-        if (_debugValue && Input.IsActionJustPressed("debug"))
-        {
-            _debugValue = false;
-        }
-        else if (!_debugValue && Input.IsActionJustPressed("debug"))
-        {
-            _debugValue = true;
-        }
 
         Vector2 _mousePosition = GetGlobalMousePosition();
         Vector2 r = _mousePosition - Position;
@@ -132,38 +133,32 @@ public partial class Scout : Area2D
 
         Vector2 thrust = Vector2.Zero;
 
-        _thrustForward = Input.IsActionPressed("thrust_forward");
-        _thrustBackward = Input.IsActionPressed("thrust_backward");
-        _thrustLeft = Input.IsActionPressed("thrust_left");
-        _thrustRight = Input.IsActionPressed("thrust_right");
-        if (_thrustForward)
+        ThrustForward = Input.IsActionPressed("thrust_forward");
+        ThrustBackward = Input.IsActionPressed("thrust_backward");
+        ThrustLeft = Input.IsActionPressed("thrust_left");
+        ThrustRight = Input.IsActionPressed("thrust_right");
+        if (ThrustForward)
         {
             thrust.X += GearOneThrustMain;
         }
-        if (_thrustBackward)
+        if (ThrustBackward)
         {
             thrust.X -= GearOneThrustForwardAxis;
         }
-        if (_thrustRight)
+        if (ThrustRight)
         {
             thrust.Y += GearOneThrustSideAxis;
         }
-        if (_thrustLeft)
+        if (ThrustLeft)
         {
             thrust.Y -= GearOneThrustSideAxis;
         }
 
-        Vector2 acceleration = thrust.Rotated(Rotation);
-        if (_debugValue)
-        {
-            acceleration = InertialDampners(acceleration);
-        }
+        Vector2 acceleration = InertialDampners(thrust.Rotated(Rotation));
 
         _velocity += acceleration * dt;
 
         Position += _velocity * dt;
-
-        QueueRedraw();
 
         if (Input.IsActionPressed("shoot") && !_shooting)
         {
@@ -195,19 +190,19 @@ public partial class Scout : Area2D
 
             if (thrustOnAxis.X > thrustThreshold)
             {
-                _thrustForward = true;
+                ThrustForward = true;
             }
             if (thrustOnAxis.X < -thrustThreshold)
             {
-                _thrustBackward = true;
+                ThrustBackward = true;
             }
             if (thrustOnAxis.Y > thrustThreshold)
             {
-                _thrustRight = true;
+                ThrustRight = true;
             }
             if (thrustOnAxis.Y < -thrustThreshold)
             {
-                _thrustLeft = true;
+                ThrustLeft = true;
             }
 
             return correctionThrust;
@@ -220,33 +215,33 @@ public partial class Scout : Area2D
 
         if (thrustOnAxis.X > thrustThreshold)
         {
-            if (!_thrustForward)
+            if (!ThrustForward)
             {
-                _thrustForward = true;
+                ThrustForward = true;
                 actualThrust.X += GearOneThrustForwardAxis;
             }
         }
         if (thrustOnAxis.X < -thrustThreshold)
         {
-            if (!_thrustBackward)
+            if (!ThrustBackward)
             {
-                _thrustBackward = true;
+                ThrustBackward = true;
                 actualThrust.X -= GearOneThrustForwardAxis;
             }
         }
         if (thrustOnAxis.Y > thrustThreshold)
         {
-            if (!_thrustRight)
+            if (!ThrustRight)
             {
-                _thrustRight = true;
+                ThrustRight = true;
                 actualThrust.Y += GearOneThrustSideAxis;
             }
         }
         if (thrustOnAxis.Y < -thrustThreshold)
         {
-            if (!_thrustLeft)
+            if (!ThrustLeft)
             {
-                _thrustLeft = true;
+                ThrustLeft = true;
                 actualThrust.Y -= GearOneThrustSideAxis;
             }
         }
@@ -262,19 +257,10 @@ public partial class Scout : Area2D
 
     void FireBullet()
     {
-        var bullet1 = BulletScene.Instantiate<ScoutBullet>();
-        bullet1.Position = Position;
-        bullet1.Rotation = Rotation;
-        bullet1.Velocity = (Vector2.Right * ShootBulletSpeed).Rotated(Rotation);
-        bullet1.Velocity += _velocity;
-
-        var bullet2 = BulletScene.Instantiate<ScoutBullet>();
-        bullet2.Position = Position;
-        bullet2.Rotation = Rotation;
-        bullet2.Velocity = (Vector2.Right * ShootBulletSpeed).Rotated(Rotation);
-        bullet2.Velocity += _velocity;
-
-        GetTree().Root.GetChild(0).AddChild(bullet1);
+        _game.MainRef.RpcSendNewBullet(
+            Position,
+            (Vector2.Right * ShootBulletSpeed).Rotated(Rotation) + _velocity
+        );
 
         _shooting = false;
     }

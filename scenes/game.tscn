@@ -19,6 +19,8 @@ SpriteBackwardThrust = ExtResource("5_2bxgp")
 SpriteLeftwardThrust = ExtResource("6_crmv7")
 SpriteRightwardThrust = ExtResource("7_kpsoa")
 
+[node name="Bullets" type="Node2D" parent="."]
+
 [node name="Map" type="Node2D" parent="."]
 
 [node name="TopLeft" type="Marker2D" parent="Map"]
