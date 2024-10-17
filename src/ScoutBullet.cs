@@ -6,7 +6,8 @@ public partial class ScoutBullet : Area2D
 
     public override void _Process(double delta)
     {
-        if (Position > Vector2.One * 4000.0f || Position < Vector2.One * -4000.0f)
+        if (Position.X < -Constants.MapWidth / 2 || Position.X > Constants.MapWidth / 2
+            || Position.Y < -Constants.MapHeight / 2 || Position.Y > Constants.MapHeight / 2)
         {
             QueueFree();
         }
