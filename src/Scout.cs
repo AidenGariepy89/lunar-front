@@ -14,6 +14,22 @@ public partial class Scout : Area2D
     [Export]
     public float GearOneMaxSpeed = 1000;
 
+    [Export]
+    public float ShootDelay;
+    [Export]
+    public float ShootBulletSpeed;
+
+    [Export]
+    public PackedScene BulletScene;
+    [Export]
+    public Texture2D SpriteForwardThrust;
+    [Export]
+    public Texture2D SpriteBackwardThrust;
+    [Export]
+    public Texture2D SpriteLeftwardThrust;
+    [Export]
+    public Texture2D SpriteRightwardThrust;
+
     static Vector2 NearZero = Vector2.One * 5.0f;
 
     Vector2 _velocity;
@@ -31,39 +47,69 @@ public partial class Scout : Area2D
 
     bool _debugValue;
 
+    Timer _shootTimer;
+    bool _shooting = false;
+
+    GpuParticles2D _backBoost;
+
+    MultiplayerSynchronizer _multiplayer;
+
     public override void _Ready()
     {
         _velocity = Vector2.Zero;
 
         _debugValue = true;
+
+        _shootTimer = GetNode<Timer>("ShootTimer");
+        _shootTimer.OneShot = true;
+        _shootTimer.WaitTime = ShootDelay;
+        _shootTimer.Timeout += FireBullet;
+
+        _backBoost = GetNode<GpuParticles2D>("BackBoost");
+
+        if (Name == "Scout")
+        {
+            throw new ApplicationException("Cannot run scene alone.");
+        }
+        _multiplayer = GetNode<MultiplayerSynchronizer>("MultiplayerSynchronizer");
+        _multiplayer.SetMultiplayerAuthority(int.Parse(Name));
     }
 
     public override void _Draw()
     {
+        var offset = new Vector2(-16, -12);
         if (_thrustForward)
         {
-            DrawCircle(Vector2.Left * 30, 20, Colors.Yellow);
+            DrawTexture(SpriteForwardThrust, offset);
         }
         if (_thrustBackward)
         {
-            DrawCircle(Vector2.Right * 20, 10, Colors.Yellow);
+            DrawTexture(SpriteBackwardThrust, offset);
         }
         if (_thrustRight)
         {
-            DrawCircle(Vector2.Up * 20, 10, Colors.Yellow);
+            DrawTexture(SpriteRightwardThrust, offset);
         }
         if (_thrustLeft)
         {
-            DrawCircle(Vector2.Down * 20, 10, Colors.Yellow);
+            DrawTexture(SpriteLeftwardThrust, offset);
         }
-
-        DrawLine(Vector2.Zero, _displayVec.Rotated(-Rotation), Colors.Red);
-        DrawLine(Vector2.Zero, _displayVec2.Rotated(-Rotation), Colors.Green);
-        DrawLine(Vector2.Zero, _displayVec3.Rotated(-Rotation), Colors.Blue);
-        DrawLine(Vector2.Zero, _displayVec4.Rotated(-Rotation), Colors.Cyan);
     }
 
     public override void _Process(double delta)
+    {
+        // put this somewhere better
+        if (_thrustForward && !_backBoost.Emitting)
+        {
+            _backBoost.Emitting = true;
+        }
+        else if (!_thrustForward && _backBoost.Emitting)
+        {
+            _backBoost.Emitting = false;
+        }
+    }
+
+    public override void _PhysicsProcess(double delta)
     {
         float dt = (float)delta;
 
@@ -118,6 +164,12 @@ public partial class Scout : Area2D
         Position += _velocity * dt;
 
         QueueRedraw();
+
+        if (Input.IsActionPressed("shoot") && !_shooting)
+        {
+            _shootTimer.Start();
+            _shooting = true;
+        }
     }
 
     Vector2 InertialDampners(Vector2 inputThrust)
@@ -126,7 +178,7 @@ public partial class Scout : Area2D
 
         bool isInputThrust = !inputThrust.IsZeroApprox();
 
-        if (!isInputThrust && _velocity < NearZero && _velocity > -NearZero)
+        if (!isInputThrust && VelocityNearZero())
         {
             _velocity = Vector2.Zero;
             return inputThrust;
@@ -200,5 +252,30 @@ public partial class Scout : Area2D
         }
 
         return correctionThrust;
+    }
+
+    bool VelocityNearZero()
+    {
+        return _velocity.X > -NearZero.X && _velocity.X < NearZero.X
+            && _velocity.Y > -NearZero.Y && _velocity.Y < NearZero.Y;
+    }
+
+    void FireBullet()
+    {
+        var bullet1 = BulletScene.Instantiate<ScoutBullet>();
+        bullet1.Position = Position;
+        bullet1.Rotation = Rotation;
+        bullet1.Velocity = (Vector2.Right * ShootBulletSpeed).Rotated(Rotation);
+        bullet1.Velocity += _velocity;
+
+        var bullet2 = BulletScene.Instantiate<ScoutBullet>();
+        bullet2.Position = Position;
+        bullet2.Rotation = Rotation;
+        bullet2.Velocity = (Vector2.Right * ShootBulletSpeed).Rotated(Rotation);
+        bullet2.Velocity += _velocity;
+
+        GetTree().Root.GetChild(0).AddChild(bullet1);
+
+        _shooting = false;
     }
 }

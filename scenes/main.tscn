@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://g0tinhabaymv"]
+[gd_scene load_steps=5 format=3 uid="uid://g0tinhabaymv"]
 
 [ext_resource type="Texture2D" uid="uid://c7rqcwd7aoive" path="res://resources/bg.png" id="1_6b1ph"]
 [ext_resource type="PackedScene" uid="uid://ddccdyjmwdyuo" path="res://scenes/scout.tscn" id="1_fix7f"]
+[ext_resource type="Script" path="res://src/Cam.cs" id="2_k8nyu"]
+[ext_resource type="PackedScene" uid="uid://cqf6l44vamist" path="res://scenes/scout_bullet.tscn" id="4_5dxlv"]
 
 [node name="Main" type="Node2D"]
 
@@ -51,7 +53,15 @@ position = Vector2(2563, 2560)
 scale = Vector2(10, 10)
 texture = ExtResource("1_6b1ph")
 
+[node name="Camera2D" type="Camera2D" parent="." node_paths=PackedStringArray("Target")]
+position = Vector2(44, 56)
+zoom = Vector2(1.295, 1.295)
+script = ExtResource("2_k8nyu")
+Target = NodePath("../Scout")
+
 [node name="Scout" parent="." instance=ExtResource("1_fix7f")]
 position = Vector2(44, 56)
 
-[node name="Camera2D" type="Camera2D" parent="Scout"]
+[node name="ScoutBullet" parent="." instance=ExtResource("4_5dxlv")]
+visible = false
+position = Vector2(43, 81)

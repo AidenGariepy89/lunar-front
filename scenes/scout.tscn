@@ -1,18 +1,42 @@
-[gd_scene load_steps=4 format=3 uid="uid://ddccdyjmwdyuo"]
+[gd_scene load_steps=11 format=3 uid="uid://ddccdyjmwdyuo"]
 
 [ext_resource type="Script" path="res://src/Scout.cs" id="1_dl0jy"]
+[ext_resource type="PackedScene" uid="uid://cqf6l44vamist" path="res://scenes/scout_bullet.tscn" id="2_py0iw"]
+[ext_resource type="Texture2D" uid="uid://cjjo56sb2fsdd" path="res://resources/scout1.png" id="3_5rhfh"]
+[ext_resource type="Texture2D" uid="uid://nr8hl1csj67g" path="res://resources/scout2.png" id="3_n1g8o"]
+[ext_resource type="Texture2D" uid="uid://cjiq3xje3rs1d" path="res://resources/scout5.png" id="4_b2vls"]
+[ext_resource type="Texture2D" uid="uid://xam2eapv8lmk" path="res://resources/scout4.png" id="5_8ifff"]
+[ext_resource type="Texture2D" uid="uid://wggkc51pjpop" path="res://resources/scout3.png" id="6_5gpgm"]
+[ext_resource type="PackedScene" uid="uid://vcrbjral67vb" path="res://scenes/scout_boost.tscn" id="8_5buhi"]
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_do224"]
-size = Vector2(16, 16)
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ymcjv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nencr"]
 size = Vector2(16, 16)
 
 [node name="Scout" type="Area2D"]
 script = ExtResource("1_dl0jy")
+ShootDelay = 0.1
+ShootBulletSpeed = 1200.0
+BulletScene = ExtResource("2_py0iw")
+SpriteForwardThrust = ExtResource("3_n1g8o")
+SpriteBackwardThrust = ExtResource("4_b2vls")
+SpriteLeftwardThrust = ExtResource("5_8ifff")
+SpriteRightwardThrust = ExtResource("6_5gpgm")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_ymcjv")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = SubResource("PlaceholderTexture2D_do224")
+position = Vector2(-4, 0)
+texture = ExtResource("3_5rhfh")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_nencr")
+
+[node name="ShootTimer" type="Timer" parent="."]
+
+[node name="BackBoost" parent="." instance=ExtResource("8_5buhi")]
+position = Vector2(-15, 0)
+rotation = 3.14159
+emitting = false

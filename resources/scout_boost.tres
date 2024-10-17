@@ -1,0 +1,39 @@
+[gd_resource type="ParticleProcessMaterial" load_steps=7 format=3 uid="uid://b56ehpw1ujkl3"]
+
+[sub_resource type="Curve" id="Curve_vn6tp"]
+_data = [Vector2(0, 0.916087), 0.0, 0.0, 0, 0, Vector2(1, 0.396841), -1.87204, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_qg3hy"]
+curve = SubResource("Curve_vn6tp")
+
+[sub_resource type="Gradient" id="Gradient_pcrba"]
+offsets = PackedFloat32Array(0, 0.648199, 1)
+colors = PackedColorArray(0.96, 0.92544, 0.7296, 1, 1, 0.49, 0.49, 1, 0.15, 0.126, 0.126, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_2obe1"]
+gradient = SubResource("Gradient_pcrba")
+
+[sub_resource type="Curve" id="Curve_pyc3m"]
+_data = [Vector2(0.257069, 0.416091), 0.0, -0.175161, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_1xrco"]
+curve = SubResource("Curve_pyc3m")
+
+[resource]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 9.0
+angle_min = -176.2
+angle_max = 247.3
+spread = 0.0
+gravity = Vector3(0, 0, 0)
+damping_min = 75.0
+damping_max = 100.0
+scale_min = 10.0
+scale_max = 15.0
+scale_curve = SubResource("CurveTexture_1xrco")
+color = Color(1, 0.992, 0.94, 1)
+color_ramp = SubResource("GradientTexture1D_2obe1")
+alpha_curve = SubResource("CurveTexture_qg3hy")

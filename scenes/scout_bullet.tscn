@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://cqf6l44vamist"]
+
+[ext_resource type="Script" path="res://src/ScoutBullet.cs" id="1_ef46p"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_qq3vq"]
+size = Vector2(16, 3)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_32fxt"]
+size = Vector2(16, 3)
+
+[node name="ScoutBullet" type="Area2D"]
+script = ExtResource("1_ef46p")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("PlaceholderTexture2D_qq3vq")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_32fxt")
