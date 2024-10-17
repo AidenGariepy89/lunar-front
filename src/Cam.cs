@@ -16,13 +16,14 @@ public partial class Cam : Camera2D
 
     public override void _Process(double delta)
     {
-        Vector2 mousePos = GetGlobalMousePosition();
-
-        if (Target != null)
+        if (Target == null)
         {
-            Vector2 halfView = GetViewportRect().Size * 0.5f;
-            Position = (((mousePos + Target.Position) / 2.0f) + Target.Position) / 2.0f;
-            GlobalPosition = GlobalPosition.Clamp(boundaryTopLeft + halfView, boundaryBottomRight - halfView);
+            return;
         }
+
+        Vector2 mousePos = GetGlobalMousePosition();
+        Vector2 halfView = GetViewportRect().Size * 0.5f;
+        Position = (((mousePos + Target.Position) / 2.0f) + Target.Position) / 2.0f;
+        GlobalPosition = GlobalPosition.Clamp(boundaryTopLeft + halfView, boundaryBottomRight - halfView);
     }
 }

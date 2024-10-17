@@ -1,0 +1,41 @@
+[gd_scene load_steps=10 format=3 uid="uid://bt7vhqci5ip13"]
+
+[ext_resource type="Texture2D" uid="uid://cqrcmvdct72s5" path="res://resources/bg_grid.png" id="1_l6h0l"]
+[ext_resource type="Script" path="res://src/Game.cs" id="1_v3bel"]
+[ext_resource type="Script" path="res://src/Cam.cs" id="2_uc2iw"]
+[ext_resource type="PackedScene" uid="uid://ddccdyjmwdyuo" path="res://scenes/scout.tscn" id="3_fjind"]
+[ext_resource type="PackedScene" uid="uid://cqf6l44vamist" path="res://scenes/scout_bullet.tscn" id="3_rx7kk"]
+[ext_resource type="Texture2D" uid="uid://nr8hl1csj67g" path="res://resources/scout2.png" id="4_82fhm"]
+[ext_resource type="Texture2D" uid="uid://cjiq3xje3rs1d" path="res://resources/scout5.png" id="5_2bxgp"]
+[ext_resource type="Texture2D" uid="uid://xam2eapv8lmk" path="res://resources/scout4.png" id="6_crmv7"]
+[ext_resource type="Texture2D" uid="uid://wggkc51pjpop" path="res://resources/scout3.png" id="7_kpsoa"]
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_v3bel")
+ScoutScene = ExtResource("3_fjind")
+BulletScene = ExtResource("3_rx7kk")
+SpriteForwardThrust = ExtResource("4_82fhm")
+SpriteBackwardThrust = ExtResource("5_2bxgp")
+SpriteLeftwardThrust = ExtResource("6_crmv7")
+SpriteRightwardThrust = ExtResource("7_kpsoa")
+
+[node name="Map" type="Node2D" parent="."]
+
+[node name="TopLeft" type="Marker2D" parent="Map"]
+position = Vector2(-12800, -7680)
+
+[node name="BottomRight" type="Marker2D" parent="Map"]
+position = Vector2(12800, 7680)
+scale = Vector2(8, 8)
+
+[node name="BackgroundGrid" type="Sprite2D" parent="Map"]
+texture_repeat = 2
+scale = Vector2(4, 4)
+texture = ExtResource("1_l6h0l")
+region_enabled = true
+region_rect = Rect2(0, 0, 6400, 3840)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(44, 56)
+zoom = Vector2(1.295, 1.295)
+script = ExtResource("2_uc2iw")

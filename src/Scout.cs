@@ -19,15 +19,10 @@ public partial class Scout : Area2D
     [Export]
     public float ShootBulletSpeed;
 
-    [Export]
     public PackedScene BulletScene;
-    [Export]
     public Texture2D SpriteForwardThrust;
-    [Export]
     public Texture2D SpriteBackwardThrust;
-    [Export]
     public Texture2D SpriteLeftwardThrust;
-    [Export]
     public Texture2D SpriteRightwardThrust;
 
     static Vector2 NearZero = Vector2.One * 5.0f;
