@@ -111,6 +111,11 @@ public partial class Scout : Area2D
 
     public override void _PhysicsProcess(double delta)
     {
+        if (_multiplayer.GetMultiplayerAuthority() != Multiplayer.GetUniqueId())
+        {
+            return;
+        }
+
         float dt = (float)delta;
 
         if (_debugValue && Input.IsActionJustPressed("debug"))
