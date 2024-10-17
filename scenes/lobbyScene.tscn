@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://belbob70f62m7"]
+
+[ext_resource type="PackedScene" uid="uid://ddccdyjmwdyuo" path="res://scenes/scout.tscn" id="1_bcc1j"]
+[ext_resource type="Script" path="res://src/SceneManager.cs" id="1_h1kwc"]
+[ext_resource type="Texture2D" uid="uid://cpd354vn8ix1v" path="res://BlackBackground.png" id="2_tc0a0"]
+
+[node name="BaseNode" type="Node2D"]
+script = ExtResource("1_h1kwc")
+playerObject = ExtResource("1_bcc1j")
+
+[node name="Parallax2D" type="Parallax2D" parent="."]
+
+[node name="Background" type="Sprite2D" parent="."]
+z_index = -3
+texture_repeat = 2
+position = Vector2(593, 343)
+scale = Vector2(0.999759, 1.00309)
+texture = ExtResource("2_tc0a0")
+
+[node name="TeamSpawns" type="Node2D" parent="."]
+
+[node name="0" type="Node2D" parent="TeamSpawns"]
+position = Vector2(1000, 300)
+
+[node name="1" type="Node2D" parent="TeamSpawns"]
+position = Vector2(100, 300)

@@ -1,0 +1,57 @@
+[gd_scene load_steps=3 format=3 uid="uid://g0tinhabaymv"]
+
+[ext_resource type="Texture2D" uid="uid://c7rqcwd7aoive" path="res://resources/bg.png" id="1_6b1ph"]
+[ext_resource type="PackedScene" uid="uid://ddccdyjmwdyuo" path="res://scenes/scout.tscn" id="1_fix7f"]
+
+[node name="Main" type="Node2D"]
+
+[node name="BG" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="BG"]
+scale = Vector2(10, 10)
+texture = ExtResource("1_6b1ph")
+
+[node name="Sprite2D2" type="Sprite2D" parent="BG"]
+position = Vector2(1280, 0)
+scale = Vector2(10, 10)
+texture = ExtResource("1_6b1ph")
+
+[node name="Sprite2D3" type="Sprite2D" parent="BG"]
+position = Vector2(2560, 0)
+scale = Vector2(10, 10)
+texture = ExtResource("1_6b1ph")
+
+[node name="Sprite2D4" type="Sprite2D" parent="BG"]
+position = Vector2(0, 1280)
+scale = Vector2(10, 10)
+texture = ExtResource("1_6b1ph")
+
+[node name="Sprite2D5" type="Sprite2D" parent="BG"]
+position = Vector2(1280, 1280)
+scale = Vector2(10, 10)
+texture = ExtResource("1_6b1ph")
+
+[node name="Sprite2D6" type="Sprite2D" parent="BG"]
+position = Vector2(2560, 1280)
+scale = Vector2(10, 10)
+texture = ExtResource("1_6b1ph")
+
+[node name="Sprite2D7" type="Sprite2D" parent="BG"]
+position = Vector2(3, 2560)
+scale = Vector2(10, 10)
+texture = ExtResource("1_6b1ph")
+
+[node name="Sprite2D8" type="Sprite2D" parent="BG"]
+position = Vector2(1283, 2560)
+scale = Vector2(10, 10)
+texture = ExtResource("1_6b1ph")
+
+[node name="Sprite2D9" type="Sprite2D" parent="BG"]
+position = Vector2(2563, 2560)
+scale = Vector2(10, 10)
+texture = ExtResource("1_6b1ph")
+
+[node name="Scout" parent="." instance=ExtResource("1_fix7f")]
+position = Vector2(44, 56)
+
+[node name="Camera2D" type="Camera2D" parent="Scout"]

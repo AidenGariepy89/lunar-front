@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://cx37txr34bqsh"]
+
+[ext_resource type="Script" path="res://src/GravityWell.cs" id="1_y3nvc"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_fise6"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_fnd20"]
+
+[node name="GravityWell" type="Node2D"]
+script = ExtResource("1_y3nvc")
+
+[node name="AttractionArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttractionArea"]
+shape = SubResource("CircleShape2D_fise6")
+
+[node name="SurfaceArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SurfaceArea"]
+shape = SubResource("CircleShape2D_fnd20")
