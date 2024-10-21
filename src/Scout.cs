@@ -384,8 +384,6 @@ public partial class Scout : Area2D
             return;
         }
 
-        GD.Print($"[{Multiplayer.GetUniqueId()}] {Name} was hit by bullet");
-
         var bullet = other as ScoutBullet;
 
         if (bullet.Faction == Faction)

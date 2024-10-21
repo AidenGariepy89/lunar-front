@@ -21,9 +21,12 @@ public partial class Main : Node2D
     List<long> EarthTeam = new List<long>();
     List<long> MarsTeam = new List<long>();
 
+    Logger _log;
+
     public override void _Ready()
     {
         _peer = new ENetMultiplayerPeer();
+        _log = new Logger(-1, "main");
 
         Multiplayer.PeerConnected += PeerConnected;
         Multiplayer.PeerDisconnected += PeerDisconnected;
@@ -43,8 +46,6 @@ public partial class Main : Node2D
     /// Client setup
     public void StartClient()
     {
-        GD.Print("[client] setting up client.");
-
         var err = _peer.CreateClient(Constants.Address, Constants.Port);
         if (err != Error.Ok)
         {
@@ -55,13 +56,14 @@ public partial class Main : Node2D
 
         Multiplayer.MultiplayerPeer = _peer;
 
-        GD.Print("[client] set up client.");
+        _log.MultiplayerId = _peer.GetUniqueId();
+        _log.Line("Set up client.");
     }
 
     /// Server setup
     void Server()
     {
-        GD.Print("[server] setting up server.");
+        _log.Line("Setting up server.");
 
         _server = true;
 
@@ -75,13 +77,14 @@ public partial class Main : Node2D
 
         Multiplayer.MultiplayerPeer = _peer;
 
-        GD.Print("[server] server set up.");
+        _log.MultiplayerId = _peer.GetUniqueId();
+        _log.Line("Server set up.");
     }
 
     /// Every peer
     void PeerConnected(long id)
     {
-        GD.Print($"[peer {Multiplayer.GetUniqueId()}] peer connected to {id}.");
+        _log.Line($"Peer connected to {id}.");
 
         if (Multiplayer.GetUniqueId() == Constants.ServerId)
         {
@@ -94,7 +97,7 @@ public partial class Main : Node2D
     /// Every peer
     void PeerDisconnected(long id)
     {
-        GD.Print("[peer] peer disconnected.");
+        _log.Line("Peer disconnected.");
 
         if (_server)
         {
@@ -107,7 +110,7 @@ public partial class Main : Node2D
     /// Client function
     void ConnectedToServer()
     {
-        GD.Print("[client] connected to server!");
+        _log.Line("Connected to server!");
 
         _game = GameScene.Instantiate<Game>();
         _game.Instantiate(this);
@@ -120,7 +123,7 @@ public partial class Main : Node2D
     /// Client function
     void ConnectionFailed()
     {
-        GD.Print("[client] connection failed");
+        _log.StdErr("Connection failed");
     }
 
     public void RpcSendNewBullet(
@@ -180,7 +183,7 @@ public partial class Main : Node2D
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     void RequestPlayers(long id)
     {
-        GD.Print($"[{Multiplayer.GetUniqueId()}] Requested players from {id}");
+        _log.Line($"Requested players from {id}");
 
         var ids = new long[ActivePlayers];
 
@@ -232,13 +235,7 @@ public partial class Main : Node2D
             return;
         }
 
-        if (_server)
-        {
-            GD.Print("--- weird that this happens ---");
-            return;
-        }
-
-        GD.Print($"[{Multiplayer.GetUniqueId()}] Spawning scout with id {scoutId} and faction {(Faction)faction}");
+        _log.Line($"Spawning scout with id {scoutId} and faction {(Faction)faction}");
 
         _game.SpawnScout(scoutId, (Faction)faction);
     }

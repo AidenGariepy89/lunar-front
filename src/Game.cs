@@ -24,9 +24,12 @@ public partial class Game : Node2D
     Node2D _scouts;
     Cam _cam;
 
+    Logger _log;
+
     public override void _Ready()
     {
         _spawnedScouts = new List<long>();
+        _log = new Logger(Multiplayer.GetUniqueId(), "game");
     }
 
     public void Instantiate(Main main)
@@ -53,7 +56,7 @@ public partial class Game : Node2D
 
         _scouts.AddChild(scout);
 
-        GD.Print($"[game] Player {id} joined in faction {scout.Faction}");
+        _log.Line($"Player {id} joined in faction {scout.Faction}");
     }
 
     public bool RemoveScout(long id)
