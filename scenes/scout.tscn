@@ -1,7 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://ddccdyjmwdyuo"]
+[gd_scene load_steps=11 format=3 uid="uid://ddccdyjmwdyuo"]
 
 [ext_resource type="Script" path="res://src/Scout.cs" id="1_dl0jy"]
+[ext_resource type="Texture2D" uid="uid://nr8hl1csj67g" path="res://resources/scout2.png" id="2_d3ep3"]
 [ext_resource type="Texture2D" uid="uid://cjjo56sb2fsdd" path="res://resources/scout1.png" id="3_5rhfh"]
+[ext_resource type="Texture2D" uid="uid://cjiq3xje3rs1d" path="res://resources/scout5.png" id="3_06cj1"]
+[ext_resource type="Texture2D" uid="uid://xam2eapv8lmk" path="res://resources/scout4.png" id="4_0t1hk"]
+[ext_resource type="PackedScene" uid="uid://bbv0o5a2hgfha" path="res://scenes/scout_explosion.tscn" id="4_03wa7"]
+[ext_resource type="Texture2D" uid="uid://wggkc51pjpop" path="res://resources/scout3.png" id="5_ryjd2"]
 [ext_resource type="PackedScene" uid="uid://vcrbjral67vb" path="res://scenes/scout_boost.tscn" id="8_5buhi"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ymcjv"]
@@ -29,6 +34,11 @@ size = Vector2(16, 16)
 
 [node name="Scout" type="Area2D"]
 script = ExtResource("1_dl0jy")
+SpriteForwardThrust = ExtResource("2_d3ep3")
+SpriteBackwardThrust = ExtResource("3_06cj1")
+SpriteLeftwardThrust = ExtResource("4_0t1hk")
+SpriteRightwardThrust = ExtResource("5_ryjd2")
+ExplosionScene = ExtResource("4_03wa7")
 ShootDelay = 0.1
 ShootBulletSpeed = 1200.0
 
@@ -40,6 +50,7 @@ position = Vector2(-4, 0)
 texture = ExtResource("3_5rhfh")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 shape = SubResource("RectangleShape2D_nencr")
 
 [node name="ShootTimer" type="Timer" parent="."]

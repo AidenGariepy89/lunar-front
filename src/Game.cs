@@ -21,32 +21,28 @@ public partial class Game : Node2D
     List<long> _spawnedScouts;
 
     Node2D _bullets;
+    Node2D _scouts;
     Cam _cam;
 
     public override void _Ready()
     {
         _spawnedScouts = new List<long>();
-        _cam = GetNode<Cam>("Camera2D");
-
-        _bullets = GetNode<Node2D>("Bullets");
     }
 
     public void Instantiate(Main main)
     {
         MainRef = main;
+        _cam = GetNode<Cam>("Camera2D");
+        _bullets = GetNode<Node2D>("Bullets");
+        _scouts = GetNode<Node2D>("Scouts");
     }
 
-    public void SpawnScout(long id)
+    public void SpawnScout(long id, Faction faction)
     {
         Scout scout = ScoutScene.Instantiate<Scout>();
         scout.Name = id.ToString();
-        scout.BulletScene = BulletScene;
-        scout.SpriteForwardThrust = SpriteForwardThrust;
-        scout.SpriteBackwardThrust = SpriteBackwardThrust;
-        scout.SpriteRightwardThrust = SpriteRightwardThrust;
-        scout.SpriteLeftwardThrust = SpriteLeftwardThrust;
-
-        scout.Instantiate(this);
+        scout.Faction = faction;
+        scout.Instantiate(id, this);
 
         if (id == Multiplayer.GetUniqueId())
         {
@@ -55,12 +51,14 @@ public partial class Game : Node2D
 
         _spawnedScouts.Add(id);
 
-        AddChild(scout);
+        _scouts.AddChild(scout);
+
+        GD.Print($"[game] Player {id} joined in faction {scout.Faction}");
     }
 
     public bool RemoveScout(long id)
     {
-        var children = GetChildren();
+        var children = _scouts.GetChildren();
         foreach (var child in children)
         {
             if (child.Name == id.ToString())
@@ -74,13 +72,45 @@ public partial class Game : Node2D
         return false;
     }
 
-    public void SpawnScoutBullet(Vector2 position, Vector2 velocity)
+    public void SpawnScoutBullet(
+        Vector2 position,
+        Vector2 velocity,
+        float rotation,
+        Faction faction
+    )
     {
         var bullet = BulletScene.Instantiate<ScoutBullet>();
         bullet.Position = position;
         bullet.Velocity = velocity;
-        bullet.Rotation = velocity.Angle();
+        bullet.Rotation = rotation;
+        bullet.Faction = faction;
 
         _bullets.AddChild(bullet);
+    }
+
+    public Vector2 RequestRespawnCoords()
+    {
+        return Vector2.Zero;
+    }
+
+    public void PlayerDied(long id)
+    {
+        var children = _scouts.GetChildren();
+        foreach (var child in children)
+        {
+            if (child is not Scout)
+            {
+                continue;
+            }
+
+            var scout = child as Scout;
+
+            if (scout.MultiplayerID == id)
+            {
+                // ignore this warning
+                scout.Die();
+                break;
+            }
+        }
     }
 }

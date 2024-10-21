@@ -1,8 +1,36 @@
 using Godot;
 using System;
+using System.Threading.Tasks;
+
+public enum Faction
+{
+    Earth,
+    Mars,
+}
 
 public partial class Scout : Area2D
 {
+    [Signal]
+    public delegate void ScoutDiedEventHandler();
+
+    enum State
+    {
+        Alive,
+        Dead,
+    }
+
+    [Export]
+    public Texture2D SpriteForwardThrust;
+    [Export]
+    public Texture2D SpriteBackwardThrust;
+    [Export]
+    public Texture2D SpriteLeftwardThrust;
+    [Export]
+    public Texture2D SpriteRightwardThrust;
+
+    [Export]
+    public PackedScene ExplosionScene;
+
     [Export]
     public float GearOneThrustMain = 600;
     [Export]
@@ -19,12 +47,6 @@ public partial class Scout : Area2D
     [Export]
     public float ShootBulletSpeed;
 
-    public PackedScene BulletScene;
-    public Texture2D SpriteForwardThrust;
-    public Texture2D SpriteBackwardThrust;
-    public Texture2D SpriteLeftwardThrust;
-    public Texture2D SpriteRightwardThrust;
-
     [Export]
     public bool ThrustForward = false;
     [Export]
@@ -34,29 +56,50 @@ public partial class Scout : Area2D
     [Export]
     public bool ThrustLeft = false;
 
+    [Export]
+    public int MaxHealth = 3;
+
+    [Export]
+    public double RespawnDelay = 5.0;
+
+    [Export]
+    /// Set to export so it can be tracked by MultiplayerSynchronizer
+    public int Health { get => _health; set => SetHealth(value); }
+
+    public long MultiplayerID;
+    public Faction Faction = Faction.Earth;
+
     static Vector2 NearZero = Vector2.One * 5.0f;
 
-    Vector2 _velocity;
-
-    GravityWell _gravityWell = null;
-
-    Vector2 _displayVec = Vector2.Zero;
-    Vector2 _displayVec2 = Vector2.Zero;
-    Vector2 _displayVec3 = Vector2.Zero;
-    Vector2 _displayVec4 = Vector2.Zero;
-
-    Timer _shootTimer;
-    bool _shooting = false;
-
     GpuParticles2D _backBoost;
-
     MultiplayerSynchronizer _multiplayer;
+    Sprite2D _sprite;
+    Timer _shootTimer;
+
+    Vector2 _velocity;
+    int _health;
+    bool _shooting = false;
+    State _state = State.Dead;
 
     Game _game = null;
 
     public override void _Ready()
     {
+        _health = MaxHealth;
         _velocity = Vector2.Zero;
+        AreaEntered += BulletHit;
+    }
+
+    public void Instantiate(long id, Game game)
+    {
+        MultiplayerID = id;
+
+        _game = game;
+
+        ScoutDied += () =>
+        {
+            _game.MainRef.RpcPlayerDied(MultiplayerID);
+        };
 
         _shootTimer = GetNode<Timer>("ShootTimer");
         _shootTimer.OneShot = true;
@@ -65,21 +108,56 @@ public partial class Scout : Area2D
 
         _backBoost = GetNode<GpuParticles2D>("BackBoost");
 
+        _sprite = GetNode<Sprite2D>("Sprite2D");
+
         if (Name == "Scout")
         {
             throw new ApplicationException("Cannot run scene alone.");
         }
         _multiplayer = GetNode<MultiplayerSynchronizer>("MultiplayerSynchronizer");
-        _multiplayer.SetMultiplayerAuthority(int.Parse(Name));
+        _multiplayer.SetMultiplayerAuthority((int)id);
+        _multiplayer.SetVisibilityFor(1, false);
+
+        Reset();
     }
 
-    public void Instantiate(Game game)
+    public async void SetHealth(int value)
     {
-        _game = game;
+        _health = value;
+        if (_health <= 0)
+        {
+            _health = 0;
+
+            EmitSignal(SignalName.ScoutDied);
+
+            await Die();
+
+            var respawn = _game.RequestRespawnCoords();
+            Position = respawn;
+        }
+    }
+
+    public async Task Die()
+    {
+        _state = State.Dead;
+        _sprite.Visible = false;
+        _backBoost.Emitting = false;
+
+        var explosion = ExplosionScene.Instantiate<ScoutExplosion>();
+        AddChild(explosion);
+
+        await ToSignal(GetTree().CreateTimer(RespawnDelay), SceneTreeTimer.SignalName.Timeout);
+
+        Reset();
     }
 
     public override void _Draw()
     {
+        if (_state != State.Alive)
+        {
+            return;
+        }
+
         var offset = new Vector2(-16, -12);
         if (ThrustForward)
         {
@@ -101,6 +179,11 @@ public partial class Scout : Area2D
 
     public override void _Process(double delta)
     {
+        if (_state != State.Alive)
+        {
+            return;
+        }
+
         // put this somewhere better
         if (ThrustForward && !_backBoost.Emitting)
         {
@@ -123,35 +206,41 @@ public partial class Scout : Area2D
 
         float dt = (float)delta;
 
-        Vector2 _mousePosition = GetGlobalMousePosition();
-        Vector2 r = _mousePosition - Position;
-
-        if (r != Vector2.Zero)
+        if (_state == State.Alive)
         {
-            Rotation = r.Angle();
+            Vector2 _mousePosition = GetGlobalMousePosition();
+            Vector2 r = _mousePosition - Position;
+
+            if (r != Vector2.Zero)
+            {
+                Rotation = r.Angle();
+            }
         }
 
         Vector2 thrust = Vector2.Zero;
 
-        ThrustForward = Input.IsActionPressed("thrust_forward");
-        ThrustBackward = Input.IsActionPressed("thrust_backward");
-        ThrustLeft = Input.IsActionPressed("thrust_left");
-        ThrustRight = Input.IsActionPressed("thrust_right");
-        if (ThrustForward)
+        if (_state == State.Alive)
         {
-            thrust.X += GearOneThrustMain;
-        }
-        if (ThrustBackward)
-        {
-            thrust.X -= GearOneThrustForwardAxis;
-        }
-        if (ThrustRight)
-        {
-            thrust.Y += GearOneThrustSideAxis;
-        }
-        if (ThrustLeft)
-        {
-            thrust.Y -= GearOneThrustSideAxis;
+            ThrustForward = Input.IsActionPressed("thrust_forward");
+            ThrustBackward = Input.IsActionPressed("thrust_backward");
+            ThrustLeft = Input.IsActionPressed("thrust_left");
+            ThrustRight = Input.IsActionPressed("thrust_right");
+            if (ThrustForward)
+            {
+                thrust.X += GearOneThrustMain;
+            }
+            if (ThrustBackward)
+            {
+                thrust.X -= GearOneThrustForwardAxis;
+            }
+            if (ThrustRight)
+            {
+                thrust.Y += GearOneThrustSideAxis;
+            }
+            if (ThrustLeft)
+            {
+                thrust.Y -= GearOneThrustSideAxis;
+            }
         }
 
         Vector2 acceleration = InertialDampners(thrust.Rotated(Rotation));
@@ -160,10 +249,18 @@ public partial class Scout : Area2D
 
         Position += _velocity * dt;
 
-        if (Input.IsActionPressed("shoot") && !_shooting)
+        if (_state == State.Alive)
         {
-            _shootTimer.Start();
-            _shooting = true;
+            if (Input.IsActionPressed("shoot") && !_shooting)
+            {
+                _shootTimer.Start();
+                _shooting = true;
+            }
+
+            if (Input.IsActionJustPressed("debug"))
+            {
+                Health = 0;
+            }
         }
     }
 
@@ -259,9 +356,45 @@ public partial class Scout : Area2D
     {
         _game.MainRef.RpcSendNewBullet(
             Position,
-            (Vector2.Right * ShootBulletSpeed).Rotated(Rotation) + _velocity
+            (Vector2.Right * ShootBulletSpeed).Rotated(Rotation) + _velocity,
+            Rotation,
+            Faction
         );
 
         _shooting = false;
+    }
+
+    void Reset()
+    {
+        Health = MaxHealth;
+        _state = State.Alive;
+        _velocity = Vector2.Zero;
+        _sprite.Visible = true;
+    }
+
+    void BulletHit(Area2D other)
+    {
+        if (MultiplayerID != Multiplayer.GetUniqueId())
+        {
+            return;
+        }
+
+        if (other is not ScoutBullet)
+        {
+            return;
+        }
+
+        GD.Print($"[{Multiplayer.GetUniqueId()}] {Name} was hit by bullet");
+
+        var bullet = other as ScoutBullet;
+
+        if (bullet.Faction == Faction)
+        {
+            return;
+        }
+
+        bullet.QueueFree();
+
+        Health = 0;
     }
 }

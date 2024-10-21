@@ -41,3 +41,5 @@ region_rect = Rect2(0, 0, 6400, 3840)
 position = Vector2(44, 56)
 zoom = Vector2(1.295, 1.295)
 script = ExtResource("2_uc2iw")
+
+[node name="Scouts" type="Node2D" parent="."]

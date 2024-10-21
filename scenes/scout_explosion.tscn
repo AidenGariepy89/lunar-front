@@ -1,0 +1,48 @@
+[gd_scene load_steps=9 format=3 uid="uid://bbv0o5a2hgfha"]
+
+[ext_resource type="Script" path="res://src/ScoutExplosion.cs" id="1_4v0he"]
+
+[sub_resource type="Gradient" id="Gradient_7oaic"]
+colors = PackedColorArray(1, 1, 1, 1, 0.86, 0.86, 0.86, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_dm8nr"]
+gradient = SubResource("Gradient_7oaic")
+
+[sub_resource type="Gradient" id="Gradient_qwb3w"]
+offsets = PackedFloat32Array(0, 0.293629, 0.443213, 0.603878, 0.742382, 0.891967, 1)
+colors = PackedColorArray(0.9, 0.8769, 0.702, 1, 0.93, 0.73191, 0.2697, 1, 0.94, 0.59361, 0.3102, 1, 0.96, 0.4848, 0.3264, 1, 0.97, 0.2522, 0.2522, 1, 0.75, 0.2475, 0.2475, 1, 0.21, 0.1176, 0.1176, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_jwomi"]
+gradient = SubResource("Gradient_qwb3w")
+
+[sub_resource type="Curve" id="Curve_1ng7j"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.807198, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.416091), -6.94553, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_nca42"]
+curve = SubResource("Curve_1ng7j")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_fwax5"]
+particle_flag_disable_z = true
+angle_min = -720.0
+angle_max = 720.0
+spread = 180.0
+initial_velocity_min = 2.0
+initial_velocity_max = 200.0
+angular_velocity_min = -437.48
+angular_velocity_max = 380.73
+gravity = Vector3(0, 0, 0)
+scale_min = 3.0
+scale_max = 10.0
+scale_curve = SubResource("CurveTexture_nca42")
+color_ramp = SubResource("GradientTexture1D_jwomi")
+color_initial_ramp = SubResource("GradientTexture1D_dm8nr")
+
+[node name="ScoutExplosion" type="GPUParticles2D"]
+emitting = false
+amount = 300
+process_material = SubResource("ParticleProcessMaterial_fwax5")
+lifetime = 2.0
+one_shot = true
+explosiveness = 0.88
+script = ExtResource("1_4v0he")
