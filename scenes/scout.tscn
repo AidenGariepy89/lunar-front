@@ -39,8 +39,8 @@ SpriteBackwardThrust = ExtResource("3_06cj1")
 SpriteLeftwardThrust = ExtResource("4_0t1hk")
 SpriteRightwardThrust = ExtResource("5_ryjd2")
 ExplosionScene = ExtResource("4_03wa7")
-ShootDelay = 0.1
-ShootBulletSpeed = 1200.0
+ShootDelay = 0.16
+ShootBulletSpeed = 1100.0
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_ymcjv")
@@ -59,3 +59,9 @@ shape = SubResource("RectangleShape2D_nencr")
 position = Vector2(-15, 0)
 rotation = 3.14159
 emitting = false
+
+[node name="BulletSpawnLeft" type="Marker2D" parent="."]
+position = Vector2(8, -6)
+
+[node name="BulletSpawnRight" type="Marker2D" parent="."]
+position = Vector2(8, 6)

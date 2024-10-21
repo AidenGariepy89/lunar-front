@@ -75,10 +75,13 @@ public partial class Scout : Area2D
     MultiplayerSynchronizer _multiplayer;
     Sprite2D _sprite;
     Timer _shootTimer;
+    Node2D _bulletSpawnLeft;
+    Node2D _bulletSpawnRight;
 
     Vector2 _velocity;
     int _health;
     bool _shooting = false;
+    bool _alternatingFireLeft = false;
     State _state = State.Dead;
 
     Game _game = null;
@@ -106,6 +109,9 @@ public partial class Scout : Area2D
         _shootTimer.WaitTime = ShootDelay;
         _shootTimer.Timeout += FireBullet;
 
+        _bulletSpawnLeft = GetNode<Node2D>("BulletSpawnLeft");
+        _bulletSpawnRight = GetNode<Node2D>("BulletSpawnRight");
+
         _backBoost = GetNode<GpuParticles2D>("BackBoost");
 
         _sprite = GetNode<Sprite2D>("Sprite2D");
@@ -116,7 +122,6 @@ public partial class Scout : Area2D
         }
         _multiplayer = GetNode<MultiplayerSynchronizer>("MultiplayerSynchronizer");
         _multiplayer.SetMultiplayerAuthority((int)id);
-        _multiplayer.SetVisibilityFor(1, false);
 
         Reset();
     }
@@ -354,13 +359,25 @@ public partial class Scout : Area2D
 
     void FireBullet()
     {
-        _game.MainRef.RpcSendNewBullet(
-            Position,
-            (Vector2.Right * ShootBulletSpeed).Rotated(Rotation) + _velocity,
-            Rotation,
-            Faction
-        );
-
+        if (_alternatingFireLeft)
+        {
+            _game.MainRef.RpcSendNewBullet(
+                _bulletSpawnLeft.GlobalPosition,
+                (Vector2.Right * ShootBulletSpeed).Rotated(Rotation) + _velocity,
+                Rotation,
+                Faction
+            );
+        }
+        else
+        {
+            _game.MainRef.RpcSendNewBullet(
+                _bulletSpawnRight.GlobalPosition,
+                (Vector2.Right * ShootBulletSpeed).Rotated(Rotation) + _velocity,
+                Rotation,
+                Faction
+            );
+        }
+        _alternatingFireLeft = !_alternatingFireLeft;
         _shooting = false;
     }
 

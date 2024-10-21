@@ -1,9 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://cqf6l44vamist"]
+[gd_scene load_steps=6 format=3 uid="uid://cqf6l44vamist"]
 
 [ext_resource type="Script" path="res://src/ScoutBullet.cs" id="1_ef46p"]
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_qq3vq"]
-size = Vector2(16, 3)
+[ext_resource type="Texture2D" uid="uid://c0dbom2pota7w" path="res://resources/earth_bullet.png" id="2_73x4a"]
+[ext_resource type="Texture2D" uid="uid://1h264shaj3wv" path="res://resources/mars_bullet.png" id="3_k34iw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_32fxt"]
 size = Vector2(16, 3)
@@ -18,9 +17,10 @@ properties/1/replication_mode = 1
 
 [node name="ScoutBullet" type="Area2D"]
 script = ExtResource("1_ef46p")
+EarthTexture = ExtResource("2_73x4a")
+MarsTexture = ExtResource("3_k34iw")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = SubResource("PlaceholderTexture2D_qq3vq")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_32fxt")
