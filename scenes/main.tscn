@@ -1,8 +1,27 @@
-[gd_scene load_steps=4 format=3 uid="uid://g0tinhabaymv"]
+[gd_scene load_steps=8 format=3 uid="uid://g0tinhabaymv"]
 
 [ext_resource type="Script" path="res://src/Main.cs" id="1_7afpe"]
 [ext_resource type="PackedScene" uid="uid://bt7vhqci5ip13" path="res://scenes/game.tscn" id="1_ow7f5"]
 [ext_resource type="Script" path="res://src/Lobby.cs" id="2_tfh3f"]
+[ext_resource type="Texture2D" uid="uid://b3yit6q3ew6gn" path="res://resources/MainMenuLogo.png" id="4_840rg"]
+
+[sub_resource type="Gradient" id="Gradient_7f3l2"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0.957792, 1)
+colors = PackedColorArray(0.319255, 0.319255, 0.319255, 1, 0.162066, 0.162066, 0.162066, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_sqs8x"]
+gradient = SubResource("Gradient_7f3l2")
+width = 128
+height = 48
+fill = 2
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_nexgg"]
+font_color = Color(0.817521, 0.817521, 0.817521, 1)
+outline_size = 2
+outline_color = Color(0.353438, 0.353438, 0.353438, 1)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_7afpe")
@@ -13,12 +32,37 @@ GameScene = ExtResource("1_ow7f5")
 [node name="Lobby" type="Control" parent="CanvasLayer"]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 1150.0
+offset_bottom = 650.0
 script = ExtResource("2_tfh3f")
 
 [node name="Join" type="Button" parent="CanvasLayer/Lobby"]
 layout_mode = 0
-offset_right = 8.0
-offset_bottom = 8.0
+offset_left = 501.0
+offset_top = 240.0
+offset_right = 637.0
+offset_bottom = 296.0
 text = "Join Game"
+icon = SubResource("GradientTexture2D_sqs8x")
+icon_alignment = 1
+
+[node name="RichTextLabel" type="TextureRect" parent="CanvasLayer/Lobby"]
+layout_mode = 0
+offset_left = 335.0
+offset_top = 55.0
+offset_right = 815.0
+offset_bottom = 195.0
+texture = ExtResource("4_840rg")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/Lobby"]
+layout_mode = 0
+offset_left = 400.0
+offset_top = 350.0
+offset_right = 745.0
+offset_bottom = 451.0
+text = "In Game Controls:
+• WASD / Arrow keys for moving your ship
+• Spacebar / Left click to shoot from your ship
+• Mouse movement to rotate your ship"
+label_settings = SubResource("LabelSettings_nexgg")
