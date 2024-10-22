@@ -402,6 +402,11 @@ public partial class Scout : Area2D
             return;
         }
 
+        if (_state == State.Dead)
+        {
+            return;
+        }
+
         var bullet = other as ScoutBullet;
 
         if (bullet.Faction == Faction)
