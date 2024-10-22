@@ -10,6 +10,8 @@ public partial class ScoutBullet : Area2D
     public Vector2 Velocity = Vector2.Zero;
     public Faction Faction;
 
+    Game _game;
+
     public override void _Ready()
     {
         var sprite = GetNode<Sprite2D>("Sprite2D");
@@ -21,10 +23,14 @@ public partial class ScoutBullet : Area2D
         sprite.Texture = EarthTexture;
     }
 
+    public void Instantiate(Game game)
+    {
+        _game = game;
+    }
+
     public override void _Process(double delta)
     {
-        if (Position.X < -Constants.MapWidth / 2 || Position.X > Constants.MapWidth / 2
-            || Position.Y < -Constants.MapHeight / 2 || Position.Y > Constants.MapHeight / 2)
+        if (!Utils.InBounds(Position, _game.TopLeft, _game.BottomRight))
         {
             QueueFree();
         }

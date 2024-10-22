@@ -21,25 +21,23 @@ SpriteRightwardThrust = ExtResource("7_kpsoa")
 
 [node name="Bullets" type="Node2D" parent="."]
 
+[node name="TopLeft" type="Marker2D" parent="."]
+position = Vector2(-5120, -4352)
+
+[node name="BottomRight" type="Marker2D" parent="."]
+position = Vector2(5120, 4352)
+
 [node name="Map" type="Node2D" parent="."]
-
-[node name="TopLeft" type="Marker2D" parent="Map"]
-position = Vector2(-12800, -7680)
-
-[node name="BottomRight" type="Marker2D" parent="Map"]
-position = Vector2(12800, 7680)
-scale = Vector2(8, 8)
 
 [node name="BackgroundGrid" type="Sprite2D" parent="Map"]
 texture_repeat = 2
 scale = Vector2(4, 4)
 texture = ExtResource("1_l6h0l")
 region_enabled = true
-region_rect = Rect2(0, 0, 6400, 3840)
+region_rect = Rect2(0, 0, 2560, 2176)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(44, 56)
-zoom = Vector2(1.295, 1.295)
 script = ExtResource("2_uc2iw")
 
 [node name="Scouts" type="Node2D" parent="."]

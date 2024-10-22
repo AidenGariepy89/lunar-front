@@ -17,9 +17,13 @@ public partial class Game : Node2D
     public Texture2D SpriteRightwardThrust;
 
     public Main MainRef;
+    public Vector2 TopLeft { get => _topLeft.Position; }
+    public Vector2 BottomRight { get => _bottomRight.Position; }
 
     List<long> _spawnedScouts;
 
+    Node2D _topLeft;
+    Node2D _bottomRight;
     Node2D _bullets;
     Node2D _scouts;
     Cam _cam;
@@ -35,7 +39,10 @@ public partial class Game : Node2D
     public void Instantiate(Main main)
     {
         MainRef = main;
+        _topLeft = GetNode<Node2D>("TopLeft");
+        _bottomRight = GetNode<Node2D>("BottomRight");
         _cam = GetNode<Cam>("Camera2D");
+        _cam.Instantiate(TopLeft, BottomRight);
         _bullets = GetNode<Node2D>("Bullets");
         _scouts = GetNode<Node2D>("Scouts");
     }
@@ -87,6 +94,8 @@ public partial class Game : Node2D
         bullet.Velocity = velocity;
         bullet.Rotation = rotation;
         bullet.Faction = faction;
+
+        bullet.Instantiate(this);
 
         _bullets.AddChild(bullet);
     }

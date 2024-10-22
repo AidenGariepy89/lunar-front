@@ -5,13 +5,13 @@ public partial class Cam : Camera2D
     [Export]
     public Node2D Target = null;
 
-    Vector2 boundaryTopLeft;
-    Vector2 boundaryBottomRight;
+    Vector2 _boundTopLeft;
+    Vector2 _boundBottomRight;
 
-    public override void _Ready()
+    public void Instantiate(Vector2 boundTopLeft, Vector2 boundBottomRight)
     {
-        boundaryTopLeft = new Vector2(-Constants.MapWidth/2, -Constants.MapHeight/2);
-        boundaryBottomRight = new Vector2(Constants.MapWidth/2, Constants.MapHeight/2);
+        _boundTopLeft = boundTopLeft;
+        _boundBottomRight = boundBottomRight;
     }
 
     public override void _Process(double delta)
@@ -30,6 +30,7 @@ public partial class Cam : Camera2D
 
         Vector2 halfView = GetViewportRect().Size * 0.5f;
         Position = (((mousePos + Target.Position) / 2.0f) + Target.Position) / 2.0f;
-        Position = Position.Clamp(boundaryTopLeft + halfView, boundaryBottomRight - halfView);
+        Vector2 clamp = Position;
+        Position = Position.Clamp(_boundTopLeft + halfView, _boundBottomRight - halfView);
     }
 }

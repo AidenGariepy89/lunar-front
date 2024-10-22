@@ -253,6 +253,7 @@ public partial class Scout : Area2D
         _velocity += acceleration * dt;
 
         Position += _velocity * dt;
+        Position = Position.Clamp(_game.TopLeft, _game.BottomRight);
 
         if (_state == State.Alive)
         {
