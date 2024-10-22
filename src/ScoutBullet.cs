@@ -7,13 +7,29 @@ public partial class ScoutBullet : Area2D
     [Export]
     public Texture2D MarsTexture;
 
+    [Export]
+    public float Timeout = 5.0f;
+    [Export]
+    public float FadeoutTime = 1.0f;
+
     public Vector2 Velocity = Vector2.Zero;
     public Faction Faction;
 
     Game _game;
+    Timer _timer;
 
-    public override void _Ready()
+    bool _fading = false;
+
+    public void Instantiate(Game game)
     {
+        _game = game;
+
+        _timer = GetNode<Timer>("Timer");
+        _timer.Autostart = true;
+        _timer.OneShot = true;
+        _timer.WaitTime = (Timeout > FadeoutTime) ? Timeout - FadeoutTime : 0;
+        _timer.Timeout += TimedOut;
+
         var sprite = GetNode<Sprite2D>("Sprite2D");
         if (Faction == Faction.Mars)
         {
@@ -23,18 +39,34 @@ public partial class ScoutBullet : Area2D
         sprite.Texture = EarthTexture;
     }
 
-    public void Instantiate(Game game)
-    {
-        _game = game;
-    }
-
     public override void _Process(double delta)
     {
+        float dt = (float)delta;
+
         if (!Utils.InBounds(Position, _game.TopLeft, _game.BottomRight))
         {
             QueueFree();
         }
 
-        Position += Velocity * (float)delta;
+        Position += Velocity * dt;
+
+        if (_fading)
+        {
+            if (Modulate.A <= 0)
+            {
+                _fading = false;
+                QueueFree();
+            }
+
+            Color mod = Modulate;
+            mod.A -= dt / FadeoutTime;
+            Modulate = mod;
+        }
+    }
+
+    void TimedOut()
+    {
+        _fading = true;
+        SetCollisionLayerValue(1, false);
     }
 }

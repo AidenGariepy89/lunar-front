@@ -27,3 +27,6 @@ shape = SubResource("RectangleShape2D_32fxt")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_benoh")
+
+[node name="Timer" type="Timer" parent="."]
+autostart = true

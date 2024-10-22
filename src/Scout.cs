@@ -19,6 +19,7 @@ public partial class Scout : Area2D
         Dead,
     }
 
+    [ExportGroup("Sprites")]
     [Export]
     public Texture2D SpriteForwardThrust;
     [Export]
@@ -27,10 +28,16 @@ public partial class Scout : Area2D
     public Texture2D SpriteLeftwardThrust;
     [Export]
     public Texture2D SpriteRightwardThrust;
+    [Export]
+    public Texture2D SpriteTeamEarth;
+    [Export]
+    public Texture2D SpriteTeamMars;
 
+    [ExportGroup("Scenes")]
     [Export]
     public PackedScene ExplosionScene;
 
+    [ExportGroup("Settings")]
     [Export]
     public float GearOneThrustMain = 600;
     [Export]
@@ -68,23 +75,29 @@ public partial class Scout : Area2D
 
     public long MultiplayerID;
     public Faction Faction = Faction.Earth;
+    public AnimationPlayer Animator { get => _animator; }
 
     static Vector2 NearZero = Vector2.One * 5.0f;
 
+    // Child Nodes
     GpuParticles2D _backBoost;
     MultiplayerSynchronizer _multiplayer;
     Sprite2D _sprite;
     Timer _shootTimer;
     Node2D _bulletSpawnLeft;
     Node2D _bulletSpawnRight;
+    AnimationPlayer _animator;
+    ScoutShield _shield;
 
+    // Node references
+    Game _game = null;
+
+    // State
     Vector2 _velocity;
     int _health;
     bool _shooting = false;
     bool _alternatingFireLeft = false;
     State _state = State.Dead;
-
-    Game _game = null;
 
     public override void _Ready()
     {
@@ -114,7 +127,7 @@ public partial class Scout : Area2D
 
         _backBoost = GetNode<GpuParticles2D>("BackBoost");
 
-        _sprite = GetNode<Sprite2D>("Sprite2D");
+        _sprite = GetNode<Sprite2D>("ScoutSprite");
 
         if (Name == "Scout")
         {
@@ -122,6 +135,20 @@ public partial class Scout : Area2D
         }
         _multiplayer = GetNode<MultiplayerSynchronizer>("MultiplayerSynchronizer");
         _multiplayer.SetMultiplayerAuthority((int)id);
+
+        if (Faction == Faction.Earth)
+        {
+            _sprite.Texture = SpriteTeamEarth;
+        }
+        else
+        {
+            _sprite.Texture = SpriteTeamMars;
+        }
+
+        _animator = GetNode<AnimationPlayer>("Animator");
+
+        _shield = GetNode<ScoutShield>("Shield");
+        _shield.Initialize(this);
 
         Reset();
     }
@@ -416,6 +443,9 @@ public partial class Scout : Area2D
 
         bullet.QueueFree();
 
-        Health = 0;
+        if (!_shield.Damage(10))
+        {
+            Health -= 1;
+        }
     }
 }
