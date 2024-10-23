@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://thyyk6c6vjq4"]
+
+[ext_resource type="Script" path="res://core/Main.cs" id="1_be0g3"]
+[ext_resource type="PackedScene" uid="uid://cm1842xm45mg5" path="res://server/server.tscn" id="2_ij2f1"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_be0g3")
+ServerScene = ExtResource("2_ij2f1")
