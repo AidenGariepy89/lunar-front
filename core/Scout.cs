@@ -33,6 +33,7 @@ public class Scout
     public const double RespawnDelay = 5.0;
 
     // Input Variables
+
     public bool Forward = false;
     public bool Backward = false;
     public bool Rightward = false;

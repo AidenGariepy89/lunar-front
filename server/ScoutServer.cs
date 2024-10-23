@@ -144,26 +144,25 @@ public partial class ScoutServer : Area2D
 
     void FireBullet()
     {
+        var spawnPos = Vector2.Zero;
         if (_shootingFireLeft)
         {
-            _server.MainRef.Rpc(
-                Core.Main.MethodName.SpawnNewBullet,
-                _bulletSpawnLeft.GlobalPosition,
-                (Vector2.Right * Scout.ShootBulletSpeed).Rotated(Data.Rotation) + Data.Velocity,
-                Rotation,
-                (int)Data.Faction
-            );
+            spawnPos = _bulletSpawnLeft.GlobalPosition;
         }
         else
         {
-            _server.MainRef.Rpc(
-                Core.Main.MethodName.SpawnNewBullet,
-                _bulletSpawnRight.GlobalPosition,
-                (Vector2.Right * Scout.ShootBulletSpeed).Rotated(Data.Rotation) + Data.Velocity,
-                Rotation,
-                (int)Data.Faction
-            );
+            spawnPos = _bulletSpawnRight.GlobalPosition;
         }
+
+        var packet = BulletPacket.Construct(
+            _server.NextBulletId,
+            spawnPos,
+            (Vector2.Right * Scout.ShootBulletSpeed).Rotated(Data.Rotation) + Data.Velocity,
+            Rotation,
+            Data.Faction
+        );
+        _server.MainRef.Rpc(Core.Main.MethodName.SpawnNewBullet, packet);
+
         _shootingFireLeft = !_shootingFireLeft;
         _shooting = false;
     }

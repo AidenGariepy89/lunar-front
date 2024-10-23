@@ -14,6 +14,7 @@ public partial class ScoutBullet : Area2D
     [Export]
     public float FadeoutTime = 1.0f;
 
+    public long BulletId;
     public Vector2 Velocity = Vector2.Zero;
     public Faction Faction;
 

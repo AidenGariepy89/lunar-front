@@ -74,15 +74,16 @@ public partial class Main : Node2D, NetworkObject
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true)]
-    public void SpawnNewBullet(Vector2 position, Vector2 velocity, float rotation, int faction)
+    public void SpawnNewBullet(Array bulletPacket)
     {
-        // _networkObject.SpawnNewBullet(position, velocity, rotation, faction);
+        var data = BulletPacket.Deconstruct(bulletPacket);
 
         var bullet = BulletScene.Instantiate<ScoutBullet>();
-        bullet.Position = position;
-        bullet.Velocity = velocity;
-        bullet.Rotation = rotation;
-        bullet.Faction = (Faction)faction;
+        bullet.BulletId = data.BulletId;
+        bullet.Position = data.Position;
+        bullet.Velocity = data.Velocity;
+        bullet.Rotation = data.Rotation;
+        bullet.Faction = data.Faction;
         bullet.Initialize(Map);
 
         Bullets.AddChild(bullet);

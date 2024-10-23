@@ -10,6 +10,7 @@ public partial class Server : Node2D, NetworkObject
     public PackedScene ScoutScene;
 
     public Core.Main MainRef;
+    public long NextBulletId = 1;
 
     Logger _log;
 
@@ -72,7 +73,6 @@ public partial class Server : Node2D, NetworkObject
 
         MainRef.Scouts.AddChild(scout);
 
-
         MainRef.Rpc(Core.Main.MethodName.SpawnNewScout, newScoutData);
         MainRef.RpcId(id, Core.Main.MethodName.SpawnScouts, existingScouts);
     }
@@ -109,7 +109,7 @@ public partial class Server : Node2D, NetworkObject
             }
         }
 
-        if (marsCount > earthCount)
+        if (marsCount < earthCount)
         {
             return Faction.Mars;
         }
