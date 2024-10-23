@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://yw0raut60wko"]
+
+[ext_resource type="Script" path="res://client/Client.cs" id="1_cq6i1"]
+[ext_resource type="PackedScene" uid="uid://c5i35ke47a16c" path="res://client/scout_client.tscn" id="2_ep25r"]
+
+[node name="Client" type="Node2D"]
+script = ExtResource("1_cq6i1")
+ScoutScene = ExtResource("2_ep25r")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Button" type="Button" parent="CanvasLayer"]
+offset_right = 8.0
+offset_bottom = 8.0
+text = "AAAAAAAAAAAAa"
+
+[node name="Scouts" type="Node2D" parent="."]

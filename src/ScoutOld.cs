@@ -2,13 +2,7 @@ using Godot;
 using System;
 using System.Threading.Tasks;
 
-public enum Faction
-{
-    Earth,
-    Mars,
-}
-
-public partial class Scout : Area2D
+public partial class ScoutOld : Area2D
 {
     [Signal]
     public delegate void ScoutDiedEventHandler();
@@ -74,7 +68,7 @@ public partial class Scout : Area2D
     public int Health { get => _health; set => SetHealth(value); }
 
     public long MultiplayerID;
-    public Faction Faction = Faction.Earth;
+    public Core.Faction Faction = Core.Faction.Earth;
     public AnimationPlayer Animator { get => _animator; }
 
     static Vector2 NearZero = Vector2.One * 5.0f;
@@ -136,7 +130,7 @@ public partial class Scout : Area2D
         _multiplayer = GetNode<MultiplayerSynchronizer>("MultiplayerSynchronizer");
         _multiplayer.SetMultiplayerAuthority((int)id);
 
-        if (Faction == Faction.Earth)
+        if (Faction == Core.Faction.Earth)
         {
             _sprite.Texture = SpriteTeamEarth;
         }

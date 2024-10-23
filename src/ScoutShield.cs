@@ -20,15 +20,15 @@ public partial class ScoutShield : Sprite2D
     }
 
     int _health;
-    Scout _scout;
+    ScoutOld _scout;
 
-    public void Initialize(Scout scout)
+    public void Initialize(ScoutOld scout)
     {
         _health = MaxHealth;
 
         _scout = scout;
 
-        if (_scout.Faction == Faction.Mars)
+        if (_scout.Faction == Core.Faction.Mars)
         {
             Texture = SpriteMars;
         }

@@ -13,7 +13,7 @@ public partial class ScoutBullet : Area2D
     public float FadeoutTime = 1.0f;
 
     public Vector2 Velocity = Vector2.Zero;
-    public Faction Faction;
+    public Core.Faction Faction;
 
     Game _game;
     Timer _timer;
@@ -31,7 +31,7 @@ public partial class ScoutBullet : Area2D
         _timer.Timeout += TimedOut;
 
         var sprite = GetNode<Sprite2D>("Sprite2D");
-        if (Faction == Faction.Mars)
+        if (Faction == Core.Faction.Mars)
         {
             sprite.Texture = MarsTexture;
             return;

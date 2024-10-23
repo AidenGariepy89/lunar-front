@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://c5i35ke47a16c"]
+
+[ext_resource type="Script" path="res://client/ScoutClient.cs" id="1_1w5gs"]
+[ext_resource type="Texture2D" uid="uid://dkpejha3aw4uf" path="res://resources/scout_earth.png" id="2_sfhb0"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5cpgv"]
+size = Vector2(16, 16)
+
+[node name="ScoutClient" type="Area2D"]
+script = ExtResource("1_1w5gs")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(-4, 0)
+texture = ExtResource("2_sfhb0")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_5cpgv")

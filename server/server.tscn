@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://cm1842xm45mg5"]
+[gd_scene load_steps=3 format=3 uid="uid://cm1842xm45mg5"]
 
 [ext_resource type="Script" path="res://server/Server.cs" id="1_hqpgn"]
+[ext_resource type="PackedScene" uid="uid://g03r8kravjbk" path="res://server/scout_server.tscn" id="2_qp5qe"]
 
 [node name="Server" type="Node2D"]
 script = ExtResource("1_hqpgn")
+ScoutScene = ExtResource("2_qp5qe")
+
+[node name="Scouts" type="Node2D" parent="."]

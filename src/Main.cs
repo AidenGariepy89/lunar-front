@@ -88,7 +88,7 @@ public partial class Main : Node2D
 
         if (Multiplayer.GetUniqueId() == Constants.ServerId)
         {
-            Faction faction = FactionJoin(id);
+            Core.Faction faction = FactionJoin(id);
 
             return;
         }
@@ -130,22 +130,22 @@ public partial class Main : Node2D
         Vector2 position,
         Vector2 velocity,
         float rotation,
-        Faction faction
+        Core.Faction faction
     )
     {
         Rpc(MethodName.SendNewBullet, position, velocity, rotation, (int)faction);
     }
 
-    Faction FactionJoin(long id)
+    Core.Faction FactionJoin(long id)
     {
         if (MarsTeam.Count < EarthTeam.Count)
         {
             MarsTeam.Add(id);
-            return Faction.Mars;
+            return Core.Faction.Mars;
         }
 
         EarthTeam.Add(id);
-        return Faction.Earth;
+        return Core.Faction.Earth;
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
@@ -161,7 +161,7 @@ public partial class Main : Node2D
             return;
         }
 
-        _game.SpawnScoutBullet(position, velocity, rotation, (Faction)faction);
+        _game.SpawnScoutBullet(position, velocity, rotation, (Core.Faction)faction);
     }
 
     public void RpcPlayerDied(long id)
@@ -198,10 +198,10 @@ public partial class Main : Node2D
 
         RpcId(id, MethodName.ReceiveExistingPlayers, ids, EarthTeam.Count);
 
-        Faction faction = Faction.Earth;
+        Core.Faction faction = Core.Faction.Earth;
         if (MarsTeam.Contains(id))
         {
-            faction = Faction.Mars;
+            faction = Core.Faction.Mars;
         }
         else if (!EarthTeam.Contains(id))
         {
@@ -218,11 +218,11 @@ public partial class Main : Node2D
         {
             if (i < factionCutoff)
             {
-                _game.SpawnScout(ids[i], Faction.Earth);
+                _game.SpawnScout(ids[i], Core.Faction.Earth);
             }
             else
             {
-                _game.SpawnScout(ids[i], Faction.Mars);
+                _game.SpawnScout(ids[i], Core.Faction.Mars);
             }
         }
     }
@@ -235,8 +235,8 @@ public partial class Main : Node2D
             return;
         }
 
-        _log.Line($"Spawning scout with id {scoutId} and faction {(Faction)faction}");
+        _log.Line($"Spawning scout with id {scoutId} and faction {(Core.Faction)faction}");
 
-        _game.SpawnScout(scoutId, (Faction)faction);
+        _game.SpawnScout(scoutId, (Core.Faction)faction);
     }
 }

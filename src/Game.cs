@@ -47,9 +47,9 @@ public partial class Game : Node2D
         _scouts = GetNode<Node2D>("Scouts");
     }
 
-    public void SpawnScout(long id, Faction faction)
+    public void SpawnScout(long id, Core.Faction faction)
     {
-        Scout scout = ScoutScene.Instantiate<Scout>();
+        ScoutOld scout = ScoutScene.Instantiate<ScoutOld>();
         scout.Name = id.ToString();
         scout.Faction = faction;
         scout.Instantiate(id, this);
@@ -86,7 +86,7 @@ public partial class Game : Node2D
         Vector2 position,
         Vector2 velocity,
         float rotation,
-        Faction faction
+        Core.Faction faction
     )
     {
         var bullet = BulletScene.Instantiate<ScoutBullet>();
@@ -110,12 +110,12 @@ public partial class Game : Node2D
         var children = _scouts.GetChildren();
         foreach (var child in children)
         {
-            if (child is not Scout)
+            if (child is not ScoutOld)
             {
                 continue;
             }
 
-            var scout = child as Scout;
+            var scout = child as ScoutOld;
 
             if (scout.MultiplayerID == id)
             {

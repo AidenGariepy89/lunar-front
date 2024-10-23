@@ -69,6 +69,11 @@ public class Scout
 
     public static Scout Deserialize(Array arr)
     {
+        if (arr.Count != 10)
+        {
+            throw new System.Exception("ARRAY BAD!!!!");
+        }
+
         var scout = new Scout();
 
         // State
