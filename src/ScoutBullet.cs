@@ -43,7 +43,7 @@ public partial class ScoutBullet : Area2D
     {
         float dt = (float)delta;
 
-        if (!Utils.InBounds(Position, _game.TopLeft, _game.BottomRight))
+        if (!Core.Utils.InBounds(Position, _game.TopLeft, _game.BottomRight))
         {
             QueueFree();
         }

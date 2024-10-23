@@ -11,6 +11,12 @@ public enum Faction
 
 public class Scout
 {
+    public enum State
+    {
+        Alive,
+        Dead,
+    }
+
     // Constants
 
     public const float ThrustMain = 600;
@@ -18,6 +24,8 @@ public class Scout
     public const float ThrustSideAxis = 300;
     public const float CorrectionThrust = 200;
     public const float MaxSpeed = 1000;
+
+    public static Vector2 NearZero = Vector2.One * 5.0f;
 
     public const int MaxHealth = 3;
     public const double RespawnDelay = 5.0;
@@ -34,6 +42,7 @@ public class Scout
     public long MultiplayerID;
     public Faction Faction = Faction.Earth;
     public float Health = MaxHealth;
+    public State CurrentState = State.Alive;
 
     public Vector2 Position;
     public Vector2 Velocity;
@@ -44,6 +53,25 @@ public class Scout
         Position = Vector2.Zero;
         Velocity = Vector2.Zero;
         Rotation = 0.0f;
+    }
+    
+    public Scout Copy()
+    {
+        var copy = new Scout();
+
+        copy.MultiplayerID = MultiplayerID;
+        copy.Faction = Faction;
+        copy.Health = Health;
+        copy.CurrentState = CurrentState;
+        copy.Position = Position;
+        copy.Velocity = Velocity;
+        copy.Rotation = Rotation;
+        copy.ThrustForward = ThrustForward;
+        copy.ThrustBackward = ThrustBackward;
+        copy.ThrustRight = ThrustRight;
+        copy.ThrustLeft = ThrustLeft;
+
+        return copy;
     }
 
     public Array Serialize()
@@ -91,5 +119,146 @@ public class Scout
         scout.ThrustLeft = (bool)arr[9];
 
         return scout;
+    }
+
+    public void Process(
+        float dt,
+        Vector2 mouse, 
+        bool forward,
+        bool backward,
+        bool rightward,
+        bool leftward
+    )
+    {
+        if (CurrentState == State.Alive)
+        {
+            Vector2 r = mouse - Position;
+
+            if (r != Vector2.Zero)
+            {
+                Rotation = r.Angle();
+            }
+        }
+
+        Vector2 thrust = Vector2.Zero;
+
+        if (CurrentState == State.Alive)
+        {
+            ThrustForward = forward;
+            ThrustBackward = backward;
+            ThrustLeft = leftward;
+            ThrustRight = rightward;
+            if (ThrustForward)
+            {
+                thrust.X += ThrustMain;
+            }
+            if (ThrustBackward)
+            {
+                thrust.X -= ThrustForwardAxis;
+            }
+            if (ThrustRight)
+            {
+                thrust.Y += ThrustSideAxis;
+            }
+            if (ThrustLeft)
+            {
+                thrust.Y -= ThrustSideAxis;
+            }
+        }
+
+        Vector2 acceleration = InertialDampners(thrust.Rotated(Rotation));
+
+        Velocity += acceleration * dt;
+
+        Position += Velocity * dt;
+        // Position = Position.Clamp(_game.TopLeft, _game.BottomRight);
+    }
+
+    public Vector2 InertialDampners(Vector2 inputThrust)
+    {
+        float thrustThreshold = 10.0f;
+
+        bool isInputThrust = !inputThrust.IsZeroApprox();
+
+        if (!isInputThrust && VelocityNearZero())
+        {
+            Velocity = Vector2.Zero;
+            return inputThrust;
+        }
+
+        Vector2 targetVelocity = Vector2.Zero;
+        Vector2 correctionThrust;
+        Vector2 thrustOnAxis;
+
+        if (inputThrust.IsZeroApprox())
+        {
+            correctionThrust = (targetVelocity - Velocity).Normalized() * CorrectionThrust;
+            thrustOnAxis = correctionThrust.Rotated(-Rotation);
+
+            if (thrustOnAxis.X > thrustThreshold)
+            {
+                ThrustForward = true;
+            }
+            if (thrustOnAxis.X < -thrustThreshold)
+            {
+                ThrustBackward = true;
+            }
+            if (thrustOnAxis.Y > thrustThreshold)
+            {
+                ThrustRight = true;
+            }
+            if (thrustOnAxis.Y < -thrustThreshold)
+            {
+                ThrustLeft = true;
+            }
+
+            return correctionThrust;
+        }
+
+        targetVelocity = inputThrust.Normalized() * MaxSpeed;
+        correctionThrust = targetVelocity - Velocity;
+        thrustOnAxis = correctionThrust.Rotated(-Rotation);
+        Vector2 actualThrust = inputThrust;
+
+        if (thrustOnAxis.X > thrustThreshold)
+        {
+            if (!ThrustForward)
+            {
+                ThrustForward = true;
+                actualThrust.X += ThrustForwardAxis;
+            }
+        }
+        if (thrustOnAxis.X < -thrustThreshold)
+        {
+            if (!ThrustBackward)
+            {
+                ThrustBackward = true;
+                actualThrust.X -= ThrustForwardAxis;
+            }
+        }
+        if (thrustOnAxis.Y > thrustThreshold)
+        {
+            if (!ThrustRight)
+            {
+                ThrustRight = true;
+                actualThrust.Y += ThrustSideAxis;
+            }
+        }
+        if (thrustOnAxis.Y < -thrustThreshold)
+        {
+            if (!ThrustLeft)
+            {
+                ThrustLeft = true;
+                actualThrust.Y -= ThrustSideAxis;
+            }
+        }
+
+        return correctionThrust;
+    }
+    
+    public bool VelocityNearZero()
+    {
+        return Velocity.X > -NearZero.X && Velocity.X < NearZero.X
+            && Velocity.Y > -NearZero.Y && Velocity.Y < NearZero.Y;
     }
 }

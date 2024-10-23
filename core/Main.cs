@@ -4,7 +4,8 @@ using Godot.Collections;
 
 namespace Core;
 
-public partial class Main : Node2D
+/// Implements all RPCs and passes down to server or client.
+public partial class Main : Node2D, NetworkObject
 {
     [Export]
     public PackedScene ServerScene;
@@ -31,8 +32,20 @@ public partial class Main : Node2D
         }
     }
 
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    public void DeliverInput(Array input)
+    {
+        _networkObject.DeliverInput(input);
+    }
+    
     [Rpc(MultiplayerApi.RpcMode.Authority)]
-    void SpawnNewScout(Array scoutPacket)
+    public void ReceiveSync(Array<Array> syncData)
+    {
+        _networkObject.ReceiveSync(syncData);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority)]
+    public void SpawnNewScout(Array scoutPacket)
     {
         _networkObject.SpawnNewScout(scoutPacket);
     }

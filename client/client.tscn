@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://yw0raut60wko"]
+[gd_scene load_steps=4 format=3 uid="uid://yw0raut60wko"]
 
 [ext_resource type="Script" path="res://client/Client.cs" id="1_cq6i1"]
 [ext_resource type="PackedScene" uid="uid://c5i35ke47a16c" path="res://client/scout_client.tscn" id="2_ep25r"]
+[ext_resource type="Script" path="res://core/InputCollector.cs" id="3_yqipv"]
 
 [node name="Client" type="Node2D"]
 script = ExtResource("1_cq6i1")
@@ -15,3 +16,9 @@ offset_bottom = 8.0
 text = "AAAAAAAAAAAAa"
 
 [node name="Scouts" type="Node2D" parent="."]
+
+[node name="InputCollector" type="Node2D" parent="."]
+script = ExtResource("3_yqipv")
+
+[node name="InputTimer" type="Timer" parent="."]
+wait_time = 0.05

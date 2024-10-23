@@ -1,7 +1,10 @@
 # Oh gosh
 
-1. [ ] - the game works with movement, no client prediction
+1. [x] - the game works with movement, no client prediction
     a. [x] - Spawn scouts
+    b. [x] - Get input from client
+    c. [x] - Process input on server
+    d. [x] - Relay data to clients
 2. [ ] - movement prediction
 3. [ ] - shooting
 4. [ ] - damage and death

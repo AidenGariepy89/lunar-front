@@ -14,4 +14,12 @@ public partial class ScoutClient : Area2D
         Position = Data.Position;
         Rotation = Data.Rotation;
     }
+
+    public void Sync(Scout data)
+    {
+        Data = data;
+
+        Position = Data.Position;
+        Rotation = Data.Rotation;
+    }
 }

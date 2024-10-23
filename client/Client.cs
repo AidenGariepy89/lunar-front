@@ -11,10 +11,13 @@ public partial class Client : Node2D, NetworkObject
 
     public Core.Main MainRef;
 
+    bool _connected = false;
     Logger _log;
 
     Button _button;
     Node2D _scouts;
+    Timer _inputTimer;
+    InputCollector _inputCollector;
 
     ScoutClient _playerScout = null;
 
@@ -28,13 +31,13 @@ public partial class Client : Node2D, NetworkObject
         _button = GetNode<Button>("CanvasLayer/Button");
         _button.Pressed += EstablishConnection;
 
+        _inputTimer = GetNode<Timer>("InputTimer");
+        _inputTimer.Timeout += InputTimeout;
+
         _log = new Logger(-1, "client");
+        _inputCollector = GetNode<InputCollector>("InputCollector");
 
         _scouts = GetNode<Node2D>("Scouts");
-    }
-
-    public override void _Process(double delta)
-    {
     }
 
     void EstablishConnection()
@@ -50,6 +53,78 @@ public partial class Client : Node2D, NetworkObject
 
         _log.MultiplayerId = peer.GetUniqueId();
         _log.Line("Established client.");
+
+        _inputTimer.Start();
+        _inputCollector.StartCollection();
+
+        _connected = true;
+    }
+
+    public override void _Process(double delta)
+    {
+        if (!_connected)
+        {
+            return;
+        }
+
+        float dt = (float)delta;
+
+        _inputCollector.Update(dt);
+    }
+
+    public void DeliverInput(Array input) { }
+
+    /// Called when current peer is in game and new peer has joined.
+    public void SpawnNewScout(Array scoutPacket)
+    {
+        var scout = Scout.Deserialize(scoutPacket);
+        
+        if (scout.MultiplayerID == Multiplayer.GetUniqueId())
+        {
+            return;
+        }
+
+        var scoutScene = ScoutScene.Instantiate<ScoutClient>();
+        scoutScene.Name = scout.MultiplayerID.ToString();
+        scoutScene.Initialize(scout);
+
+        _scouts.AddChild(scoutScene);
+
+        _log.Line("Spawned newly joined scout");
+    }
+
+    /// Called when current peer is joining for the first time.
+    public void SpawnScouts(Array<Array> scouts)
+    {
+        _log.Line($"SpawnScouts - {scouts.Count}");
+
+        foreach (var scout in scouts)
+        {
+            var scoutData = Scout.Deserialize(scout);
+            
+            var scoutScene = ScoutScene.Instantiate<ScoutClient>();
+            scoutScene.Name = scoutData.MultiplayerID.ToString();
+            scoutScene.Initialize(scoutData);
+
+            if (scoutData.MultiplayerID == Multiplayer.GetUniqueId())
+            {
+                _playerScout = scoutScene;
+            }
+
+            _scouts.AddChild(scoutScene);
+
+            _log.Line("Spawned scout");
+        }
+    }
+
+    public void ReceiveSync(Array<Array> syncData)
+    {
+        foreach (var data in syncData)
+        {
+            var scoutData = Scout.Deserialize(data);
+            GetScoutById(scoutData.MultiplayerID).Sync(scoutData);
+        }
+        _log.Line("Synced");
     }
 
     /// Cartesian product of all peers
@@ -76,44 +151,30 @@ public partial class Client : Node2D, NetworkObject
         _log.Line("Connection failed!");
     }
 
-    /// Called when current peer is in game and new peer has joined.
-    public void SpawnNewScout(Array scoutPacket)
+    void InputTimeout()
     {
-        var scout = Scout.Deserialize(scoutPacket);
-        
-        if (scout.MultiplayerID == Multiplayer.GetUniqueId())
+        var actions = _inputCollector.FinishCollection();
+
+        if (actions.Count != 0)
         {
-            return;
+            var packet = InputPacket.Construct(Multiplayer.GetUniqueId(), actions);
+            MainRef.RpcId(Constants.ServerId, Core.Main.MethodName.DeliverInput, packet);
         }
 
-        var scoutScene = ScoutScene.Instantiate<ScoutClient>();
-        scoutScene.Initialize(scout);
-
-        _scouts.AddChild(scoutScene);
-
-        _log.Line("Spawned newly joined scout");
+        _inputCollector.StartCollection();
     }
 
-    /// Called when current peer is joining for the first time.
-    public void SpawnScouts(Array<Array> scouts)
+    ScoutClient GetScoutById(long id)
     {
-        _log.Line($"SpawnScouts - {scouts.Count}");
-
-        foreach (var scout in scouts)
+        string idStr = id.ToString();
+        foreach (var child in _scouts.GetChildren())
         {
-            var scoutData = Scout.Deserialize(scout);
-            
-            var scoutScene = ScoutScene.Instantiate<ScoutClient>();
-            scoutScene.Initialize(scoutData);
-
-            if (scoutData.MultiplayerID == Multiplayer.GetUniqueId())
+            if (child.Name == idStr)
             {
-                _playerScout = scoutScene;
+                return child as ScoutClient;
             }
-
-            _scouts.AddChild(scoutScene);
-
-            _log.Line("Spawned scout");
         }
+
+        return null;
     }
 }

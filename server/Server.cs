@@ -14,10 +14,15 @@ public partial class Server : Node2D, NetworkObject
     Logger _log;
 
     Node2D _scouts;
+    Timer _syncTimer;
 
     public override void _Ready()
     {
         _scouts = GetNode<Node2D>("Scouts");
+
+        _syncTimer = GetNode<Timer>("SyncTimer");
+        _syncTimer.WaitTime = 0.0625f;
+        _syncTimer.Timeout += SyncTimeout;
 
         Multiplayer.PeerConnected += PeerConnected;
         Multiplayer.PeerDisconnected += PeerDisconnected;
@@ -35,6 +40,8 @@ public partial class Server : Node2D, NetworkObject
 
         _log.MultiplayerId = peer.GetUniqueId();
         _log.Line("Server running.");
+
+        _syncTimer.Start();
     }
 
     /// Called when a new peer connects to the server.
@@ -44,6 +51,7 @@ public partial class Server : Node2D, NetworkObject
 
         Faction faction = FactionJoin();
         var scout = ScoutScene.Instantiate<ScoutServer>();
+        scout.Name = id.ToString();
         scout.Initialize(id, faction);
 
         var existingScouts = new Array<Array>();
@@ -108,6 +116,58 @@ public partial class Server : Node2D, NetworkObject
         return Faction.Earth;
     }
 
+    public void DeliverInput(Array input)
+    {
+        var packet = InputPacket.Deconstruct(input);
+
+        _log.Line($"Received packet from {packet.Id}:");
+
+        foreach (var action in packet.Actions)
+        {
+            _log.Line($"    {action.Type} {action.Time} {action.Value}");
+        }
+
+        GetScoutById(packet.Id).UpdateInput(packet);
+    }
+
     public void SpawnNewScout(Array scoutPacket) { }
     public void SpawnScouts(Array<Array> scouts) { }
+    public void ReceiveSync(Array<Array> syncData) { }
+
+    void SyncTimeout()
+    {
+        var packet = new Array<Array>();
+
+        foreach (var child in _scouts.GetChildren())
+        {
+            var scout = child as ScoutServer;
+
+            if (scout.NeedsSync())
+            {
+                packet.Add(scout.Data.Serialize());
+            }
+        }
+
+        if (packet.Count == 0)
+        {
+            return;
+        }
+
+        MainRef.Rpc(Core.Main.MethodName.ReceiveSync, packet);
+        _log.Line("Pushed sync");
+    }
+
+    ScoutServer GetScoutById(long id)
+    {
+        string idStr = id.ToString();
+        foreach (var child in _scouts.GetChildren())
+        {
+            if (child.Name == idStr)
+            {
+                return child as ScoutServer;
+            }
+        }
+
+        return null;
+    }
 }
