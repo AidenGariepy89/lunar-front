@@ -30,6 +30,13 @@ public class Scout
     public const int MaxHealth = 3;
     public const double RespawnDelay = 5.0;
 
+    // Input Variables
+    public bool Forward = false;
+    public bool Backward = false;
+    public bool Rightward = false;
+    public bool Leftward = false;
+    public Vector2 Mouse = Vector2.Zero;
+
     // Visual Variables
 
     public bool ThrustForward = false;
@@ -70,6 +77,11 @@ public class Scout
         copy.ThrustBackward = ThrustBackward;
         copy.ThrustRight = ThrustRight;
         copy.ThrustLeft = ThrustLeft;
+        copy.Forward = Forward;
+        copy.Backward = Backward;
+        copy.Rightward = Rightward;
+        copy.Leftward = Leftward;
+        copy.Mouse = Mouse;
 
         return copy;
     }
@@ -92,12 +104,19 @@ public class Scout
         arr.Add(ThrustRight);
         arr.Add(ThrustLeft);
 
+        // Input
+        arr.Add(Forward);
+        arr.Add(Backward);
+        arr.Add(Rightward);
+        arr.Add(Leftward);
+        arr.Add(Mouse);
+
         return arr;
     }
 
     public static Scout Deserialize(Array arr)
     {
-        if (arr.Count != 10)
+        if (arr.Count != 15)
         {
             throw new System.Exception("ARRAY BAD!!!!");
         }
@@ -118,21 +137,21 @@ public class Scout
         scout.ThrustRight = (bool)arr[8];
         scout.ThrustLeft = (bool)arr[9];
 
+        // Input
+        scout.Forward = (bool)arr[10];
+        scout.Backward = (bool)arr[11];
+        scout.Rightward = (bool)arr[12];
+        scout.Leftward = (bool)arr[13];
+        scout.Mouse = (Vector2)arr[14];
+
         return scout;
     }
 
-    public void Process(
-        float dt,
-        Vector2 mouse, 
-        bool forward,
-        bool backward,
-        bool rightward,
-        bool leftward
-    )
+    public void Process(float dt, Map map)
     {
         if (CurrentState == State.Alive)
         {
-            Vector2 r = mouse - Position;
+            Vector2 r = Mouse - Position;
 
             if (r != Vector2.Zero)
             {
@@ -144,10 +163,10 @@ public class Scout
 
         if (CurrentState == State.Alive)
         {
-            ThrustForward = forward;
-            ThrustBackward = backward;
-            ThrustLeft = leftward;
-            ThrustRight = rightward;
+            ThrustForward = Forward;
+            ThrustBackward = Backward;
+            ThrustLeft = Leftward;
+            ThrustRight = Rightward;
             if (ThrustForward)
             {
                 thrust.X += ThrustMain;
@@ -171,7 +190,7 @@ public class Scout
         Velocity += acceleration * dt;
 
         Position += Velocity * dt;
-        // Position = Position.Clamp(_game.TopLeft, _game.BottomRight);
+        Position = Position.Clamp(map.TopLeft, map.BottomRight);
     }
 
     public Vector2 InertialDampners(Vector2 inputThrust)

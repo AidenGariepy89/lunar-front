@@ -1,5 +1,7 @@
 using Godot;
 
+namespace Core;
+
 public partial class Cam : Camera2D
 {
     [Export]

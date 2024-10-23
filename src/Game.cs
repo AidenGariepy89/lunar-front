@@ -26,7 +26,7 @@ public partial class Game : Node2D
     Node2D _bottomRight;
     Node2D _bullets;
     Node2D _scouts;
-    Cam _cam;
+    Core.Cam _cam;
 
     Logger _log;
 
@@ -41,7 +41,7 @@ public partial class Game : Node2D
         MainRef = main;
         _topLeft = GetNode<Node2D>("TopLeft");
         _bottomRight = GetNode<Node2D>("BottomRight");
-        _cam = GetNode<Cam>("Camera2D");
+        _cam = GetNode<Core.Cam>("Camera2D");
         _cam.Instantiate(TopLeft, BottomRight);
         _bullets = GetNode<Node2D>("Bullets");
         _scouts = GetNode<Node2D>("Scouts");

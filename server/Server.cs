@@ -16,6 +16,8 @@ public partial class Server : Node2D, NetworkObject
     Node2D _scouts;
     Timer _syncTimer;
 
+    long _currentSeqNum = 0;
+
     public override void _Ready()
     {
         _scouts = GetNode<Node2D>("Scouts");
@@ -52,7 +54,7 @@ public partial class Server : Node2D, NetworkObject
         Faction faction = FactionJoin();
         var scout = ScoutScene.Instantiate<ScoutServer>();
         scout.Name = id.ToString();
-        scout.Initialize(id, faction);
+        scout.Initialize(id, faction, MainRef.Map);
 
         var existingScouts = new Array<Array>();
 
@@ -82,6 +84,8 @@ public partial class Server : Node2D, NetworkObject
     void PeerDisconnected(long id)
     {
         _log.Line($"Disconnected with {id}");
+
+        GetScoutById(id).QueueFree();
     }
 
     Faction FactionJoin()
@@ -120,19 +124,12 @@ public partial class Server : Node2D, NetworkObject
     {
         var packet = InputPacket.Deconstruct(input);
 
-        _log.Line($"Received packet from {packet.Id}:");
-
-        foreach (var action in packet.Actions)
-        {
-            _log.Line($"    {action.Type} {action.Time} {action.Value}");
-        }
-
         GetScoutById(packet.Id).UpdateInput(packet);
     }
 
     public void SpawnNewScout(Array scoutPacket) { }
     public void SpawnScouts(Array<Array> scouts) { }
-    public void ReceiveSync(Array<Array> syncData) { }
+    public void ReceiveSync(long seqNum, Array<Array> syncData) { }
 
     void SyncTimeout()
     {
@@ -153,8 +150,8 @@ public partial class Server : Node2D, NetworkObject
             return;
         }
 
-        MainRef.Rpc(Core.Main.MethodName.ReceiveSync, packet);
-        _log.Line("Pushed sync");
+        MainRef.Rpc(Core.Main.MethodName.ReceiveSync, _currentSeqNum, packet);
+        _currentSeqNum = (_currentSeqNum + 1) % long.MaxValue;
     }
 
     ScoutServer GetScoutById(long id)

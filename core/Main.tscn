@@ -1,10 +1,32 @@
-[gd_scene load_steps=4 format=3 uid="uid://thyyk6c6vjq4"]
+[gd_scene load_steps=7 format=3 uid="uid://thyyk6c6vjq4"]
 
 [ext_resource type="Script" path="res://core/Main.cs" id="1_be0g3"]
 [ext_resource type="PackedScene" uid="uid://cm1842xm45mg5" path="res://server/server.tscn" id="2_ij2f1"]
 [ext_resource type="PackedScene" uid="uid://yw0raut60wko" path="res://client/client.tscn" id="3_d258s"]
+[ext_resource type="Texture2D" uid="uid://cqrcmvdct72s5" path="res://resources/bg_grid.png" id="4_o6fav"]
+[ext_resource type="Script" path="res://core/Map.cs" id="4_rogdi"]
+[ext_resource type="Script" path="res://core/Cam.cs" id="6_t8t8k"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_be0g3")
 ServerScene = ExtResource("2_ij2f1")
 ClientScene = ExtResource("3_d258s")
+
+[node name="Map" type="Node2D" parent="."]
+script = ExtResource("4_rogdi")
+
+[node name="BackgroundGrid" type="Sprite2D" parent="Map"]
+texture_repeat = 2
+scale = Vector2(4, 4)
+texture = ExtResource("4_o6fav")
+region_enabled = true
+region_rect = Rect2(0, 0, 2560, 2176)
+
+[node name="TopLeft" type="Marker2D" parent="Map"]
+position = Vector2(-5120, -4352)
+
+[node name="BottomRight" type="Marker2D" parent="Map"]
+position = Vector2(5120, 4352)
+
+[node name="Cam" type="Camera2D" parent="."]
+script = ExtResource("6_t8t8k")

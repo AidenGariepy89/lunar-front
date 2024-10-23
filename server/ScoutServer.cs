@@ -8,20 +8,16 @@ public partial class ScoutServer : Area2D
 {
     public Scout Data;
 
-    // Input
-    public bool Forward = false;
-    public bool Backward = false;
-    public bool Rightward = false;
-    public bool Leftward = false;
-    public Vector2 Mouse = Vector2.Zero;
-
     Queue<InputAction> _inputQueue = new Queue<InputAction>();
     float _inputSimTime;
 
-    Scout OldData = null;
+    Map _map;
+    Scout _oldData = null;
 
-    public void Initialize(long multiplayerId, Faction faction)
+    public void Initialize(long multiplayerId, Faction faction, Map map)
     {
+        _map = map;
+
         Data = new Scout();
         Data.MultiplayerID = multiplayerId;
         Data.Faction = faction;
@@ -50,25 +46,25 @@ public partial class ScoutServer : Area2D
 
     public bool NeedsSync()
     {
-        if (OldData == null)
+        if (_oldData == null)
         {
-            OldData = Data.Copy();
+            _oldData = Data.Copy();
             return true;
         }
 
-        bool needsSync = OldData.Health != Data.Health
-            || OldData.CurrentState != Data.CurrentState
-            || OldData.Position != Data.Position
-            || OldData.Velocity != Data.Velocity
-            || OldData.Rotation != Data.Rotation
-            || OldData.ThrustForward != Data.ThrustForward
-            || OldData.ThrustBackward != Data.ThrustBackward
-            || OldData.ThrustRight != Data.ThrustRight
-            || OldData.ThrustLeft != Data.ThrustLeft;
+        bool needsSync = _oldData.Health != Data.Health
+            || _oldData.CurrentState != Data.CurrentState
+            || _oldData.Position != Data.Position
+            || _oldData.Velocity != Data.Velocity
+            || _oldData.Rotation != Data.Rotation
+            || _oldData.ThrustForward != Data.ThrustForward
+            || _oldData.ThrustBackward != Data.ThrustBackward
+            || _oldData.ThrustRight != Data.ThrustRight
+            || _oldData.ThrustLeft != Data.ThrustLeft;
 
         if (needsSync)
         {
-            OldData = Data.Copy();
+            _oldData = Data.Copy();
         }
 
         return needsSync;
@@ -85,11 +81,9 @@ public partial class ScoutServer : Area2D
 
         InputAction currentInput = _inputQueue.Peek();
 
-        if (currentInput.Time <= _inputSimTime)
-        {
-            SetInput(currentInput.Type, currentInput.Value);
-            _inputQueue.Dequeue();
-        }
+        // No messing with time, assuming instant application
+        SetInput(currentInput.Type, currentInput.Value);
+        _inputQueue.Dequeue();
     }
 
     void SetInput(InputAction.InputType input, Variant value)
@@ -97,26 +91,26 @@ public partial class ScoutServer : Area2D
         switch (input)
         {
             case InputAction.InputType.ThrustForward:
-                Forward = (bool)value;
+                Data.Forward = (bool)value;
                 break;
             case InputAction.InputType.ThrustBackward:
-                Backward = (bool)value;
+                Data.Backward = (bool)value;
                 break;
             case InputAction.InputType.ThrustRightward:
-                Rightward = (bool)value;
+                Data.Rightward = (bool)value;
                 break;
             case InputAction.InputType.ThrustLeftward:
-                Leftward = (bool)value;
+                Data.Leftward = (bool)value;
                 break;
             case InputAction.InputType.Mouse:
-                Mouse = (Vector2)value;
+                Data.Mouse = (Vector2)value;
                 break;
         }
     }
 
     void Simulate(float dt)
     {
-        Data.Process(dt, Mouse, Forward, Backward, Rightward, Leftward);
+        Data.Process(dt, _map);
 
         Position = Data.Position;
         Rotation = Data.Rotation;

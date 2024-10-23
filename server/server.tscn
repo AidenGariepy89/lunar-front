@@ -10,4 +10,4 @@ ScoutScene = ExtResource("2_qp5qe")
 [node name="Scouts" type="Node2D" parent="."]
 
 [node name="SyncTimer" type="Timer" parent="."]
-wait_time = 0.063
+wait_time = 0.05

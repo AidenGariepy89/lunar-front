@@ -7,5 +7,5 @@ public interface NetworkObject
     void DeliverInput(Array input);
     void SpawnNewScout(Array scoutPacket);
     void SpawnScouts(Array<Array> scouts);
-    void ReceiveSync(Array<Array> syncData);
+    void ReceiveSync(long seqNum, Array<Array> syncData);
 }

@@ -12,10 +12,19 @@ public partial class Main : Node2D, NetworkObject
     [Export]
     public PackedScene ClientScene;
 
+    public Map Map;
+    public Cam Cam;
+
     NetworkObject _networkObject;
 
     public override void _Ready()
     {
+        Map = GetNode<Map>("Map");
+        Map.Visible = false;
+
+        Cam = GetNode<Cam>("Cam");
+        Cam.Instantiate(Map.TopLeft, Map.BottomRight);
+
         if (OS.GetCmdlineArgs().Contains("--server"))
         {
             var server = ServerScene.Instantiate<Server.Server>();
@@ -39,9 +48,9 @@ public partial class Main : Node2D, NetworkObject
     }
     
     [Rpc(MultiplayerApi.RpcMode.Authority)]
-    public void ReceiveSync(Array<Array> syncData)
+    public void ReceiveSync(long seqNum, Array<Array> syncData)
     {
-        _networkObject.ReceiveSync(syncData);
+        _networkObject.ReceiveSync(seqNum, syncData);
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority)]

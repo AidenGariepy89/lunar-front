@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://cqrcmvdct72s5" path="res://resources/bg_grid.png" id="1_l6h0l"]
 [ext_resource type="Script" path="res://src/Game.cs" id="1_v3bel"]
-[ext_resource type="Script" path="res://src/Cam.cs" id="2_uc2iw"]
+[ext_resource type="Script" path="res://core/Cam.cs" id="2_uc2iw"]
 [ext_resource type="PackedScene" uid="uid://ddccdyjmwdyuo" path="res://scenes/scout_old.tscn" id="3_fjind"]
 [ext_resource type="PackedScene" uid="uid://cqf6l44vamist" path="res://scenes/scout_bullet.tscn" id="3_rx7kk"]
 [ext_resource type="Texture2D" uid="uid://nr8hl1csj67g" path="res://resources/scout2.png" id="4_82fhm"]

@@ -13,6 +13,7 @@ public partial class Client : Node2D, NetworkObject
 
     bool _connected = false;
     Logger _log;
+    long _currentSeqNum = -1;
 
     Button _button;
     Node2D _scouts;
@@ -54,10 +55,7 @@ public partial class Client : Node2D, NetworkObject
         _log.MultiplayerId = peer.GetUniqueId();
         _log.Line("Established client.");
 
-        _inputTimer.Start();
-        _inputCollector.StartCollection();
-
-        _connected = true;
+        MainRef.Map.Visible = true;
     }
 
     public override void _Process(double delta)
@@ -86,7 +84,7 @@ public partial class Client : Node2D, NetworkObject
 
         var scoutScene = ScoutScene.Instantiate<ScoutClient>();
         scoutScene.Name = scout.MultiplayerID.ToString();
-        scoutScene.Initialize(scout);
+        scoutScene.Initialize(scout, MainRef.Map);
 
         _scouts.AddChild(scoutScene);
 
@@ -104,10 +102,12 @@ public partial class Client : Node2D, NetworkObject
             
             var scoutScene = ScoutScene.Instantiate<ScoutClient>();
             scoutScene.Name = scoutData.MultiplayerID.ToString();
-            scoutScene.Initialize(scoutData);
+            scoutScene.Initialize(scoutData, MainRef.Map);
 
             if (scoutData.MultiplayerID == Multiplayer.GetUniqueId())
             {
+                scoutScene.IsPlayerScout = true;
+                MainRef.Cam.Target = scoutScene;
                 _playerScout = scoutScene;
             }
 
@@ -117,14 +117,20 @@ public partial class Client : Node2D, NetworkObject
         }
     }
 
-    public void ReceiveSync(Array<Array> syncData)
+    public void ReceiveSync(long seqNum, Array<Array> syncData)
     {
+        // If seqNum is a past seqNum and we are sure a wrap did not happen, then ignore
+        if (seqNum <= _currentSeqNum && (seqNum > 1000 || _currentSeqNum < long.MaxValue - 1000))
+        {
+            return;
+        }
+        _currentSeqNum = seqNum;
+
         foreach (var data in syncData)
         {
             var scoutData = Scout.Deserialize(data);
             GetScoutById(scoutData.MultiplayerID).Sync(scoutData);
         }
-        _log.Line("Synced");
     }
 
     /// Cartesian product of all peers
@@ -137,6 +143,8 @@ public partial class Client : Node2D, NetworkObject
     void PeerDisconnected(long id)
     {
         _log.Line($"Disconnected with {id}");
+
+        GetScoutById(id).QueueFree();
     }
 
     void ConnectedToServer()
@@ -144,6 +152,10 @@ public partial class Client : Node2D, NetworkObject
         _log.Line("Connected to server!");
 
         RemoveChild(GetChild(0));
+
+        _inputTimer.Start();
+        _inputCollector.StartCollection();
+        _connected = true;
     }
 
     void ConnectionFailed()
