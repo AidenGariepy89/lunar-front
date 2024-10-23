@@ -15,8 +15,6 @@ offset_right = 8.0
 offset_bottom = 8.0
 text = "AAAAAAAAAAAAa"
 
-[node name="Scouts" type="Node2D" parent="."]
-
 [node name="InputCollector" type="Node2D" parent="."]
 script = ExtResource("3_yqipv")
 

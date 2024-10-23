@@ -6,6 +6,6 @@
     c. [x] - Process input on server
     d. [x] - Relay data to clients
 2. [x] - movement prediction
-3. [ ] - shooting
+3. [x] - shooting
 4. [ ] - damage and death
 5. [ ] - shield

@@ -8,6 +8,7 @@ public struct InputAction
         ThrustBackward,
         ThrustRightward,
         ThrustLeftward,
+        Shooting,
         Mouse,
     }
 

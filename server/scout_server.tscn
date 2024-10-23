@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://g03r8kravjbk"]
+[gd_scene load_steps=4 format=3 uid="uid://g03r8kravjbk"]
 
 [ext_resource type="Script" path="res://server/ScoutServer.cs" id="1_c8wvx"]
+[ext_resource type="Texture2D" uid="uid://dkpejha3aw4uf" path="res://resources/scout_earth.png" id="2_rh5mf"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ya6ok"]
 size = Vector2(16, 16)
@@ -8,6 +9,18 @@ size = Vector2(16, 16)
 [node name="ScoutServer" type="Area2D"]
 script = ExtResource("1_c8wvx")
 
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(-4, 0)
+texture = ExtResource("2_rh5mf")
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false
 shape = SubResource("RectangleShape2D_ya6ok")
+
+[node name="ShootTimer" type="Timer" parent="."]
+
+[node name="BulletSpawnLeft" type="Marker2D" parent="."]
+position = Vector2(8, -6)
+
+[node name="BulletSpawnRight" type="Marker2D" parent="."]
+position = Vector2(8, 6)

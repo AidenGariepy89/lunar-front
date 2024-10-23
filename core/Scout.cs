@@ -23,6 +23,8 @@ public class Scout
     public const float ThrustForwardAxis = 300;
     public const float ThrustSideAxis = 300;
     public const float CorrectionThrust = 200;
+    public const float ShootDelay = 0.16f;
+    public const float ShootBulletSpeed = 1100f;
     public const float MaxSpeed = 1000;
 
     public static Vector2 NearZero = Vector2.One * 5.0f;
@@ -35,6 +37,7 @@ public class Scout
     public bool Backward = false;
     public bool Rightward = false;
     public bool Leftward = false;
+    public bool Shooting = false;
     public Vector2 Mouse = Vector2.Zero;
 
     // Visual Variables
@@ -81,6 +84,7 @@ public class Scout
         copy.Backward = Backward;
         copy.Rightward = Rightward;
         copy.Leftward = Leftward;
+        copy.Shooting = Shooting;
         copy.Mouse = Mouse;
 
         return copy;
@@ -109,6 +113,7 @@ public class Scout
         arr.Add(Backward);
         arr.Add(Rightward);
         arr.Add(Leftward);
+        arr.Add(Shooting);
         arr.Add(Mouse);
 
         return arr;
@@ -116,7 +121,7 @@ public class Scout
 
     public static Scout Deserialize(Array arr)
     {
-        if (arr.Count != 15)
+        if (arr.Count != 16)
         {
             throw new System.Exception("ARRAY BAD!!!!");
         }
@@ -142,7 +147,8 @@ public class Scout
         scout.Backward = (bool)arr[11];
         scout.Rightward = (bool)arr[12];
         scout.Leftward = (bool)arr[13];
-        scout.Mouse = (Vector2)arr[14];
+        scout.Shooting = (bool)arr[14];
+        scout.Mouse = (Vector2)arr[15];
 
         return scout;
     }

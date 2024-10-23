@@ -11,12 +11,26 @@ public partial class ScoutServer : Area2D
     Queue<InputAction> _inputQueue = new Queue<InputAction>();
     float _inputSimTime;
 
-    Map _map;
-    Scout _oldData = null;
+    Timer _shootTimer;
+    bool _shootingFireLeft = false;
+    bool _shooting = false;
+    Node2D _bulletSpawnLeft;
+    Node2D _bulletSpawnRight;
 
-    public void Initialize(long multiplayerId, Faction faction, Map map)
+    Scout _oldData = null;
+    Server _server;
+
+    public void Initialize(long multiplayerId, Faction faction, Server server)
     {
-        _map = map;
+        _shootTimer = GetNode<Timer>("ShootTimer");
+        _shootTimer.OneShot = true;
+        _shootTimer.WaitTime = Scout.ShootDelay;
+        _shootTimer.Timeout += FireBullet;
+
+        _bulletSpawnLeft = GetNode<Node2D>("BulletSpawnLeft");
+        _bulletSpawnRight = GetNode<Node2D>("BulletSpawnRight");
+
+        _server = server;
 
         Data = new Scout();
         Data.MultiplayerID = multiplayerId;
@@ -42,6 +56,15 @@ public partial class ScoutServer : Area2D
         HandleInputs(dt);
 
         Simulate(dt);
+
+        if (Data.CurrentState == Scout.State.Alive)
+        {
+            if (Data.Shooting && !_shooting)
+            {
+                _shootTimer.Start();
+                _shooting = true;
+            }
+        }
     }
 
     public bool NeedsSync()
@@ -102,6 +125,9 @@ public partial class ScoutServer : Area2D
             case InputAction.InputType.ThrustLeftward:
                 Data.Leftward = (bool)value;
                 break;
+            case InputAction.InputType.Shooting:
+                Data.Shooting = (bool)value;
+                break;
             case InputAction.InputType.Mouse:
                 Data.Mouse = (Vector2)value;
                 break;
@@ -110,9 +136,35 @@ public partial class ScoutServer : Area2D
 
     void Simulate(float dt)
     {
-        Data.Process(dt, _map);
+        Data.Process(dt, _server.MainRef.Map);
 
         Position = Data.Position;
         Rotation = Data.Rotation;
+    }
+
+    void FireBullet()
+    {
+        if (_shootingFireLeft)
+        {
+            _server.MainRef.Rpc(
+                Core.Main.MethodName.SpawnNewBullet,
+                _bulletSpawnLeft.GlobalPosition,
+                (Vector2.Right * Scout.ShootBulletSpeed).Rotated(Data.Rotation) + Data.Velocity,
+                Rotation,
+                (int)Data.Faction
+            );
+        }
+        else
+        {
+            _server.MainRef.Rpc(
+                Core.Main.MethodName.SpawnNewBullet,
+                _bulletSpawnRight.GlobalPosition,
+                (Vector2.Right * Scout.ShootBulletSpeed).Rotated(Data.Rotation) + Data.Velocity,
+                Rotation,
+                (int)Data.Faction
+            );
+        }
+        _shootingFireLeft = !_shootingFireLeft;
+        _shooting = false;
     }
 }

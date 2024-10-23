@@ -13,15 +13,12 @@ public partial class Server : Node2D, NetworkObject
 
     Logger _log;
 
-    Node2D _scouts;
     Timer _syncTimer;
 
     long _currentSeqNum = 0;
 
     public override void _Ready()
     {
-        _scouts = GetNode<Node2D>("Scouts");
-
         _syncTimer = GetNode<Timer>("SyncTimer");
         _syncTimer.WaitTime = 0.0625f;
         _syncTimer.Timeout += SyncTimeout;
@@ -54,11 +51,11 @@ public partial class Server : Node2D, NetworkObject
         Faction faction = FactionJoin();
         var scout = ScoutScene.Instantiate<ScoutServer>();
         scout.Name = id.ToString();
-        scout.Initialize(id, faction, MainRef.Map);
+        scout.Initialize(id, faction, this);
 
         var existingScouts = new Array<Array>();
 
-        foreach (var child in _scouts.GetChildren())
+        foreach (var child in MainRef.Scouts.GetChildren())
         {
             var existingScout = child as ScoutServer;
             if (existingScout == null)
@@ -73,7 +70,7 @@ public partial class Server : Node2D, NetworkObject
 
         existingScouts.Add(newScoutData);
 
-        _scouts.AddChild(scout);
+        MainRef.Scouts.AddChild(scout);
 
 
         MainRef.Rpc(Core.Main.MethodName.SpawnNewScout, newScoutData);
@@ -90,7 +87,7 @@ public partial class Server : Node2D, NetworkObject
 
     Faction FactionJoin()
     {
-        var children = _scouts.GetChildren();
+        var children = MainRef.Scouts.GetChildren();
         int earthCount = 0;
         int marsCount = 0;
 
@@ -127,6 +124,10 @@ public partial class Server : Node2D, NetworkObject
         GetScoutById(packet.Id).UpdateInput(packet);
     }
 
+    public void SpawnNewBullet(Vector2 position, Vector2 velocity, float rotation, int faction)
+    {
+    }
+
     public void SpawnNewScout(Array scoutPacket) { }
     public void SpawnScouts(Array<Array> scouts) { }
     public void ReceiveSync(long seqNum, Array<Array> syncData) { }
@@ -135,7 +136,7 @@ public partial class Server : Node2D, NetworkObject
     {
         var packet = new Array<Array>();
 
-        foreach (var child in _scouts.GetChildren())
+        foreach (var child in MainRef.Scouts.GetChildren())
         {
             var scout = child as ScoutServer;
 
@@ -157,7 +158,7 @@ public partial class Server : Node2D, NetworkObject
     ScoutServer GetScoutById(long id)
     {
         string idStr = id.ToString();
-        foreach (var child in _scouts.GetChildren())
+        foreach (var child in MainRef.Scouts.GetChildren())
         {
             if (child.Name == idStr)
             {

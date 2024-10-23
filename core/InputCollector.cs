@@ -11,6 +11,7 @@ public partial class InputCollector : Node2D
     bool _thrustBackwardOn = false;
     bool _thrustRightwardOn = false;
     bool _thrustLeftwardOn = false;
+    bool _shooting = false;
     Vector2 _lastMouse = Vector2.Zero;
 
     public void StartCollection()
@@ -44,6 +45,7 @@ public partial class InputCollector : Node2D
         var backward = Input.IsActionPressed("thrust_backward");
         var rightward = Input.IsActionPressed("thrust_right");
         var leftward = Input.IsActionPressed("thrust_left");
+        var shooting = Input.IsActionPressed("shoot");
 
         if (forward != _thrustForwardOn)
         {
@@ -80,6 +82,15 @@ public partial class InputCollector : Node2D
             action.Value = leftward;
             _actions.Add(action);
             _thrustLeftwardOn = leftward;
+        }
+        if (shooting != _shooting)
+        {
+            var action = new InputAction();
+            action.Type = InputAction.InputType.Shooting;
+            action.Time = _time;
+            action.Value = shooting;
+            _actions.Add(action);
+            _shooting = shooting;
         }
         var mousePos = GetGlobalMousePosition();
         if (Utils.VectorsDiffer(mousePos, _lastMouse, 0.5f))

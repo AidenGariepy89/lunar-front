@@ -16,7 +16,6 @@ public partial class Client : Node2D, NetworkObject
     long _currentSeqNum = -1;
 
     Button _button;
-    Node2D _scouts;
     Timer _inputTimer;
     InputCollector _inputCollector;
 
@@ -37,8 +36,6 @@ public partial class Client : Node2D, NetworkObject
 
         _log = new Logger(-1, "client");
         _inputCollector = GetNode<InputCollector>("InputCollector");
-
-        _scouts = GetNode<Node2D>("Scouts");
     }
 
     void EstablishConnection()
@@ -86,7 +83,7 @@ public partial class Client : Node2D, NetworkObject
         scoutScene.Name = scout.MultiplayerID.ToString();
         scoutScene.Initialize(scout, MainRef.Map);
 
-        _scouts.AddChild(scoutScene);
+        MainRef.Scouts.AddChild(scoutScene);
 
         _log.Line("Spawned newly joined scout");
     }
@@ -111,10 +108,14 @@ public partial class Client : Node2D, NetworkObject
                 _playerScout = scoutScene;
             }
 
-            _scouts.AddChild(scoutScene);
+            MainRef.Scouts.AddChild(scoutScene);
 
             _log.Line("Spawned scout");
         }
+    }
+
+    public void SpawnNewBullet(Vector2 position, Vector2 velocity, float rotation, int faction)
+    {
     }
 
     public void ReceiveSync(long seqNum, Array<Array> syncData)
@@ -179,7 +180,7 @@ public partial class Client : Node2D, NetworkObject
     ScoutClient GetScoutById(long id)
     {
         string idStr = id.ToString();
-        foreach (var child in _scouts.GetChildren())
+        foreach (var child in MainRef.Scouts.GetChildren())
         {
             if (child.Name == idStr)
             {

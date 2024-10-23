@@ -1,19 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://cqf6l44vamist"]
+[gd_scene load_steps=5 format=3 uid="uid://cqf6l44vamist"]
 
-[ext_resource type="Script" path="res://src/ScoutBullet.cs" id="1_ef46p"]
+[ext_resource type="Script" path="res://core/ScoutBullet.cs" id="1_ef46p"]
 [ext_resource type="Texture2D" uid="uid://c0dbom2pota7w" path="res://resources/earth_bullet.png" id="2_73x4a"]
 [ext_resource type="Texture2D" uid="uid://1h264shaj3wv" path="res://resources/mars_bullet.png" id="3_k34iw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_32fxt"]
 size = Vector2(16, 3)
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_benoh"]
-properties/0/path = NodePath(".:position")
-properties/0/spawn = true
-properties/0/replication_mode = 1
-properties/1/path = NodePath(".:rotation")
-properties/1/spawn = true
-properties/1/replication_mode = 1
 
 [node name="ScoutBullet" type="Area2D"]
 script = ExtResource("1_ef46p")
@@ -24,9 +16,6 @@ MarsTexture = ExtResource("3_k34iw")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_32fxt")
-
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_benoh")
 
 [node name="Timer" type="Timer" parent="."]
 autostart = true

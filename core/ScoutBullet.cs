@@ -1,5 +1,7 @@
 using Godot;
 
+namespace Core;
+
 public partial class ScoutBullet : Area2D
 {
     [Export]
@@ -13,16 +15,16 @@ public partial class ScoutBullet : Area2D
     public float FadeoutTime = 1.0f;
 
     public Vector2 Velocity = Vector2.Zero;
-    public Core.Faction Faction;
+    public Faction Faction;
 
-    Game _game;
+    Map _map;
     Timer _timer;
 
     bool _fading = false;
 
-    public void Instantiate(Game game)
+    public void Initialize(Map map)
     {
-        _game = game;
+        _map = map;
 
         _timer = GetNode<Timer>("Timer");
         _timer.Autostart = true;
@@ -31,7 +33,7 @@ public partial class ScoutBullet : Area2D
         _timer.Timeout += TimedOut;
 
         var sprite = GetNode<Sprite2D>("Sprite2D");
-        if (Faction == Core.Faction.Mars)
+        if (Faction == Faction.Mars)
         {
             sprite.Texture = MarsTexture;
             return;
@@ -43,7 +45,7 @@ public partial class ScoutBullet : Area2D
     {
         float dt = (float)delta;
 
-        if (!Core.Utils.InBounds(Position, _game.TopLeft, _game.BottomRight))
+        if (!Utils.InBounds(Position, _map.TopLeft, _map.BottomRight))
         {
             QueueFree();
         }

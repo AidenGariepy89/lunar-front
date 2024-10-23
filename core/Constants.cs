@@ -1,3 +1,5 @@
+namespace Core;
+
 public static class Constants
 {
     public const string Address = "127.0.0.1";

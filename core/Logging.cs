@@ -1,5 +1,7 @@
 using Godot;
 
+namespace Core;
+
 public class Logger
 {
     public long MultiplayerId;
