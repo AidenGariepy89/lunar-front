@@ -29,7 +29,7 @@ public class Scout
 
     public static Vector2 NearZero = Vector2.One * 5.0f;
 
-    public const int MaxHealth = 3;
+    public const int MaxHealth = 7;
     public const double RespawnDelay = 5.0;
 
     // Input Variables
@@ -56,7 +56,6 @@ public class Scout
     public State CurrentState = State.Alive;
 
     public Vector2 Position;
-    public Vector2 SpawnPosition;
     public Vector2 Velocity;
     public float Rotation;
 
@@ -100,6 +99,7 @@ public class Scout
         arr.Add(MultiplayerID);
         arr.Add((int)Faction);
         arr.Add(Health);
+        arr.Add((int)CurrentState);
         arr.Add(Position);
         arr.Add(Velocity);
         arr.Add(Rotation);
@@ -123,7 +123,7 @@ public class Scout
 
     public static Scout Deserialize(Array arr)
     {
-        if (arr.Count != 16)
+        if (arr.Count != 17)
         {
             throw new System.Exception("ARRAY BAD!!!!");
         }
@@ -134,23 +134,24 @@ public class Scout
         scout.MultiplayerID = (long)arr[0];
         scout.Faction = (Faction)(int)arr[1];
         scout.Health = (int)arr[2];
-        scout.Position = (Vector2)arr[3];
-        scout.Velocity = (Vector2)arr[4];
-        scout.Rotation = (float)arr[5];
+        scout.CurrentState = (State)(int)arr[3];
+        scout.Position = (Vector2)arr[4];
+        scout.Velocity = (Vector2)arr[5];
+        scout.Rotation = (float)arr[6];
 
         // Visual
-        scout.ThrustForward = (bool)arr[6];
-        scout.ThrustBackward = (bool)arr[7];
-        scout.ThrustRight = (bool)arr[8];
-        scout.ThrustLeft = (bool)arr[9];
+        scout.ThrustForward = (bool)arr[7];
+        scout.ThrustBackward = (bool)arr[8];
+        scout.ThrustRight = (bool)arr[9];
+        scout.ThrustLeft = (bool)arr[10];
 
         // Input
-        scout.Forward = (bool)arr[10];
-        scout.Backward = (bool)arr[11];
-        scout.Rightward = (bool)arr[12];
-        scout.Leftward = (bool)arr[13];
-        scout.Shooting = (bool)arr[14];
-        scout.Mouse = (Vector2)arr[15];
+        scout.Forward = (bool)arr[11];
+        scout.Backward = (bool)arr[12];
+        scout.Rightward = (bool)arr[13];
+        scout.Leftward = (bool)arr[14];
+        scout.Shooting = (bool)arr[15];
+        scout.Mouse = (Vector2)arr[16];
 
         return scout;
     }
@@ -287,5 +288,12 @@ public class Scout
     {
         return Velocity.X > -NearZero.X && Velocity.X < NearZero.X
             && Velocity.Y > -NearZero.Y && Velocity.Y < NearZero.Y;
+    }
+
+    public void Reset()
+    {
+        Health = MaxHealth;
+        CurrentState = State.Alive;
+        Velocity = Vector2.Zero;
     }
 }

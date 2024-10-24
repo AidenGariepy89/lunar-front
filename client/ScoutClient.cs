@@ -52,15 +52,12 @@ public partial class ScoutClient : Area2D
 
         Position = Data.Position;
         Rotation = Data.Rotation;
+
+        Visible = Data.CurrentState == Scout.State.Alive;
     }
 
     public override void _Process(double delta)
     {
-        if (Data.CurrentState == Scout.State.Dead) {
-            Visible = false;
-        } else {
-            Visible = true;
-        }
         float dt = (float)delta;
 
         if (Data.MultiplayerID == Multiplayer.GetUniqueId())
@@ -110,13 +107,14 @@ public partial class ScoutClient : Area2D
     {
         _shootAudio.Play();
     }
-    public void PlayExplosion() {
+
+    public void PlayExplosion()
+    {
         // Here, we play the explosion animation
         // Instance the explosion scene
-        if (Visible == true) {
-            var explosion = ExplosionScene.Instantiate<Node2D>();
-            explosion.Position = Position;
-            AddChild(explosion);
-        }
+        var explosion = ExplosionScene.Instantiate<ScoutExplosion>();
+        explosion.Position = Position;
+        explosion.Visible = true;
+        GetTree().Root.GetChild(0).AddChild(explosion);
     }
 }

@@ -8,6 +8,9 @@ public partial class Server : Node2D
 {
     [Export]
     public PackedScene ScoutScene;
+    
+    [Export]
+    public float SpawnDistFromEdge = 100.0f;
 
     public Main MainRef;
     public long NextBulletId = 1;
@@ -62,11 +65,9 @@ public partial class Server : Node2D
         Faction faction = FactionJoin();
         var scout = ScoutScene.Instantiate<ScoutServer>();
         scout.Name = id.ToString();
-        scout.Position = RequestSpawnPosition(faction);
-        scout.Initialize(id, faction, this);
+        scout.Initialize(id, RequestSpawnPosition(faction), faction, this);
 
-        var existingScouts = new Array<Godot.Collections.Array>();
-
+        var existingScouts = new Array<Array>();
         foreach (var child in MainRef.Scouts.GetChildren())
         {
             var existingScout = child as ScoutServer;
@@ -78,6 +79,24 @@ public partial class Server : Node2D
             existingScouts.Add(existingScout.Data.Serialize());
         }
 
+        var existingBullets = new Array<Array>();
+        foreach (var child in MainRef.Bullets.GetChildren())
+        {
+            var bullet = child as ScoutBullet;
+            if (bullet == null)
+            {
+                continue;
+            }
+
+            existingBullets.Add(BulletSpawnPacket.Construct(
+                bullet.BulletId,
+                bullet.Position,
+                bullet.Velocity,
+                bullet.Rotation,
+                bullet.Faction
+            ));
+        }
+
         var newScoutData = scout.Data.Serialize();
 
         existingScouts.Add(newScoutData);
@@ -85,7 +104,14 @@ public partial class Server : Node2D
         MainRef.Scouts.AddChild(scout);
 
         MainRef.Rpc(Main.MethodName.SpawnNewScout, newScoutData);
-        MainRef.RpcId(id, Main.MethodName.JoinGame, existingScouts, Earth.Data.Serialize(), Mars.Data.Serialize());
+        MainRef.RpcId(
+            id,
+            Main.MethodName.JoinGame,
+            existingScouts,
+            existingBullets,
+            Earth.Data.Serialize(),
+            Mars.Data.Serialize()
+        );
     }
 
     /// Every peer
@@ -133,6 +159,24 @@ public partial class Server : Node2D
         var packet = InputPacket.Deconstruct(input);
 
         GetScoutById(packet.Id).UpdateInput(packet);
+    }
+
+    public Vector2 RequestSpawnPosition(Faction faction)
+    {
+        Vector2 spawnPosition = Vector2.Zero;
+        // This is the simplest way to do spawn points, and works since the server is the authority
+        if (faction == Faction.Earth)
+        {
+            spawnPosition.X = _rng.RandfRange(MainRef.Map.EarthSpawnLeft, MainRef.Map.EarthSpawnRight);
+            spawnPosition.Y = _rng.RandfRange(MainRef.Map.TopLeft.Y + SpawnDistFromEdge, MainRef.Map.BottomRight.Y - SpawnDistFromEdge);
+        }
+        else
+        {
+            spawnPosition.X = _rng.RandfRange(MainRef.Map.MarsSpawnLeft, MainRef.Map.MarsSpawnRight);
+            spawnPosition.Y = _rng.RandfRange(MainRef.Map.TopLeft.Y + SpawnDistFromEdge, MainRef.Map.BottomRight.Y - SpawnDistFromEdge);
+        }
+
+        return spawnPosition;
     }
 
     void SyncTimeout()
@@ -191,23 +235,5 @@ public partial class Server : Node2D
         }
 
         return null;
-    }
-
-    Vector2 RequestSpawnPosition(Faction faction)
-    {
-        Vector2 spawnPosition = Vector2.Zero;
-        // This is the simplest way to do spawn points, and works since the server is the authority
-        if (faction == Faction.Earth)
-        {
-            spawnPosition.X = _rng.RandfRange(Constants.EarthSpawn[0], Constants.EarthSpawn[0] + Constants.SpawnZoneWidth);
-            spawnPosition.Y = _rng.RandfRange(Constants.EarthSpawn[1], Constants.EarthSpawn[1] + Constants.SpawnZoneHeight);
-        }
-        else
-        {
-            spawnPosition.X = _rng.RandfRange(Constants.MarsSpawn[0], Constants.MarsSpawn[0] + Constants.SpawnZoneWidth);
-            spawnPosition.Y = _rng.RandfRange(Constants.MarsSpawn[1], Constants.MarsSpawn[1] + Constants.SpawnZoneHeight);
-        }
-
-        return spawnPosition;
     }
 }

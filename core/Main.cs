@@ -45,14 +45,14 @@ public partial class Main : Node2D
             var server = ServerScene.Instantiate<Server.Server>();
             server.MainRef = this;
             _server = server;
-            AddChild(server);
+            GetNode<Node2D>("Process").AddChild(server);
         }
         else
         {
             var client = ClientScene.Instantiate<Client.Client>();
             client.MainRef = this;
             _client = client;
-            AddChild(client);
+            GetNode<Node2D>("Process").AddChild(client);
         }
     }
 
@@ -66,7 +66,7 @@ public partial class Main : Node2D
 
         _server.DeliverInput(input);
     }
-    
+
     [Rpc(MultiplayerApi.RpcMode.Authority)]
     public void ReceiveSync(
         long seqNum,
@@ -96,30 +96,20 @@ public partial class Main : Node2D
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority)]
-    public void JoinGame(Array<Array> scouts, Array earth, Array mars)
+    public void JoinGame(Array<Array> scouts, Array<Array> bullets, Array earth, Array mars)
     {
         if (_client == null)
         {
             return;
         }
 
-        _client.JoinGame(scouts, earth, mars);
+        _client.JoinGame(scouts, bullets, earth, mars);
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true)]
-    public void SpawnNewBullet(long shotById, Array bulletPacket)
+    public void SpawnNewBullet(long shotById, Array bulletSpawnPacket)
     {
-        var data = BulletSpawnPacket.Deconstruct(bulletPacket);
-
-        var bullet = BulletScene.Instantiate<ScoutBullet>();
-        bullet.BulletId = data.BulletId;
-        bullet.Position = data.Position;
-        bullet.Velocity = data.Velocity;
-        bullet.Rotation = data.Rotation;
-        bullet.Faction = data.Faction;
-        bullet.Initialize(Map);
-
-        Bullets.AddChild(bullet);
+        CreateBullet(bulletSpawnPacket);
 
         if (_client != null)
         {
@@ -128,7 +118,8 @@ public partial class Main : Node2D
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority)]
-    public void HitScout(Array scoutPacket, long bulletId) {
+    public void HitScout(Array scoutPacket, long bulletId)
+    {
         if (_client != null)
         {
             _client.HitScout(scoutPacket, bulletId);
@@ -163,7 +154,22 @@ public partial class Main : Node2D
                 return bullet;
             }
         }
-        
+
         return null;
+    }
+
+    public void CreateBullet(Array bulletSpawnPacket)
+    {
+        var data = BulletSpawnPacket.Deconstruct(bulletSpawnPacket);
+
+        var bullet = BulletScene.Instantiate<ScoutBullet>();
+        bullet.BulletId = data.BulletId;
+        bullet.Position = data.Position;
+        bullet.Velocity = data.Velocity;
+        bullet.Rotation = data.Rotation;
+        bullet.Faction = data.Faction;
+        bullet.Initialize(Map);
+
+        Bullets.AddChild(bullet);
     }
 }

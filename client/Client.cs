@@ -89,7 +89,7 @@ public partial class Client : Node2D
     public void SpawnNewScout(Array scoutPacket)
     {
         var scout = Scout.Deserialize(scoutPacket);
-        
+
         if (scout.MultiplayerID == Multiplayer.GetUniqueId())
         {
             return;
@@ -105,7 +105,7 @@ public partial class Client : Node2D
     }
 
     /// Called when current peer is joining for the first time.
-    public void JoinGame(Array<Array> scouts, Array earth, Array mars)
+    public void JoinGame(Array<Array> scouts, Array<Array> bullets, Array earth, Array mars)
     {
         _log.Line($"Joining game");
 
@@ -121,7 +121,7 @@ public partial class Client : Node2D
         foreach (var scout in scouts)
         {
             var scoutData = Scout.Deserialize(scout);
-            
+
             var scoutScene = ScoutScene.Instantiate<ScoutClient>();
             scoutScene.Name = scoutData.MultiplayerID.ToString();
             scoutScene.Initialize(scoutData, MainRef.Map);
@@ -136,6 +136,11 @@ public partial class Client : Node2D
             MainRef.Scouts.AddChild(scoutScene);
 
             _log.Line("Spawned scout");
+        }
+
+        foreach (var bullet in bullets)
+        {
+            MainRef.CreateBullet(bullet);
         }
 
         MainRef.Minimap.Initialize(MainRef);
@@ -172,7 +177,11 @@ public partial class Client : Node2D
         {
             var bulletPacket = BulletPacket.Deconstruct(data);
 
-            MainRef.GetBulletById(bulletPacket.BulletId).Position = bulletPacket.Position;
+            var bullet = MainRef.GetBulletById(bulletPacket.BulletId);
+            if (bullet != null)
+            {
+                bullet.Position = bulletPacket.Position;
+            }
         }
 
         Earth.Sync(Planet.Deserialize(earth));
@@ -222,24 +231,26 @@ public partial class Client : Node2D
     }
 
     // Mostly for visuals, since the respawn position and alive/dead state will be updated by the server
-    public void HitScout(Array scoutPacket, long BulletId) {
-        // Here, we want to start the explosion
+    public void HitScout(Array scoutPacket, long bulletId)
+    {
+        // Here, we want to start the explosion if dead
         // We also want to delete the bullet
         var scout = Scout.Deserialize(scoutPacket);
-        _log.Line($"Client was sent a death for id: {scout.MultiplayerID}!");
         var scoutObject = GetScoutById(scout.MultiplayerID);
-        scoutObject.PlayExplosion();
-        ScoutBullet bullet = GetBulletById(BulletId);
-        if (bullet != null) {bullet.QueueFree();}
-    }
 
-    ScoutBullet GetBulletById(long id) {
-        foreach (var child in MainRef.Bullets.GetChildren()) {
-            if (child.Name == id.ToString()) {
-                return child as ScoutBullet;
-            }
+        if (scoutObject.Data.CurrentState != scout.CurrentState
+            && scout.CurrentState == Scout.State.Dead)
+        {
+            scoutObject.PlayExplosion();
         }
-        return null;
+
+        var bullet = MainRef.GetBulletById(bulletId);
+        if (bullet != null)
+        {
+            bullet.QueueFree();
+        }
+
+        scoutObject.Sync(scout);
     }
 
     ScoutClient GetScoutById(long id)

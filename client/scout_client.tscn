@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://xam2eapv8lmk" path="res://resources/textures/scout4.png" id="5_1ylwc"]
 [ext_resource type="Texture2D" uid="uid://wggkc51pjpop" path="res://resources/textures/scout3.png" id="6_yfhf4"]
 [ext_resource type="Texture2D" uid="uid://c6a7hs1t3lowl" path="res://resources/textures/scout_team1.png" id="7_24hdr"]
-[ext_resource type="PackedScene" path="res://client/scout_explosion.tscn" id="7_b8iqp"]
+[ext_resource type="PackedScene" uid="uid://b0c7qxbugkp2c" path="res://client/scout_explosion.tscn" id="7_b8iqp"]
 [ext_resource type="AudioStream" uid="uid://bhfigd7tic08m" path="res://resources/sounds/BlowUpSfx_edit.mp3" id="8_8exlu"]
 [ext_resource type="AudioStream" uid="uid://cqu8qy5wmoj3x" path="res://resources/sounds/laserShoot.wav" id="9_oa1x5"]
 
@@ -28,6 +28,7 @@ position = Vector2(-4, 0)
 texture = ExtResource("7_24hdr")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 shape = SubResource("RectangleShape2D_5cpgv")
 
 [node name="ExplosionSound" type="AudioStreamPlayer2D" parent="."]
@@ -35,3 +36,4 @@ stream = ExtResource("8_8exlu")
 
 [node name="ShootSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("9_oa1x5")
+volume_db = -6.036

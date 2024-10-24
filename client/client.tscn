@@ -63,7 +63,7 @@ label_settings = SubResource("LabelSettings_clb3p")
 position = Vector2(-488, 0)
 
 [node name="Mars" parent="." instance=ExtResource("4_ai0x6")]
-position = Vector2(424, 0)
+position = Vector2(1618, 0)
 
 [node name="InputCollector" type="Node2D" parent="."]
 script = ExtResource("3_yqipv")

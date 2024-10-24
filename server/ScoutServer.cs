@@ -2,7 +2,6 @@ using Godot;
 using System.Collections.Generic;
 using Core;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace Server;
 
@@ -22,7 +21,7 @@ public partial class ScoutServer : Area2D
     Scout _oldData = null;
     Server _server;
 
-    public void Initialize(long multiplayerId, Faction faction, Server server)
+    public void Initialize(long multiplayerId, Vector2 spawnPosition, Faction faction, Server server)
     {
         _shootTimer = GetNode<Timer>("ShootTimer");
         _shootTimer.OneShot = true;
@@ -35,6 +34,7 @@ public partial class ScoutServer : Area2D
         _server = server;
 
         Data = new Scout();
+        Data.Position = spawnPosition;
         Data.MultiplayerID = multiplayerId;
         Data.Faction = faction;
 
@@ -48,7 +48,7 @@ public partial class ScoutServer : Area2D
         _inputSimTime = 0.0f;
         foreach (var action in packet.Actions)
         {
-                _inputQueue.Enqueue(action);
+            _inputQueue.Enqueue(action);
         }
     }
 
@@ -174,8 +174,14 @@ public partial class ScoutServer : Area2D
         _shootingFireLeft = !_shootingFireLeft;
         _shooting = false;
     }
-    async void BulletHit(Area2D other)
+
+    void BulletHit(Area2D other)
     {
+        if (Data.CurrentState == Scout.State.Dead)
+        {
+            return;
+        }
+
         if (other is not ScoutBullet)
         {
             return;
@@ -187,37 +193,28 @@ public partial class ScoutServer : Area2D
         {
             return;
         }
-        if (Data.Health > 1)
+
+        Data.Health -= ScoutBullet.Damage;
+
+        if (Data.Health <= 0)
         {
-            Data.Health -= 1;
-            return;
-        } else {
             Data.Health = 0;
             Data.CurrentState = Scout.State.Dead;
-            _server.MainRef.Rpc(Core.Main.MethodName.HitScout, Data.Serialize(), bullet.BulletId);
-            await Die();
+
+            Die(); // we don't want this to be awaited
         }
+
+        _server.MainRef.Rpc(Core.Main.MethodName.HitScout, Data.Serialize(), bullet.BulletId);
 
         bullet.QueueFree();
     }
-    public async Task Die() {
-        Data.CurrentState = Scout.State.Dead;
+
+    public async Task Die()
+    {
         await ToSignal(GetTree().CreateTimer(Constants.RespawnDelay), SceneTreeTimer.SignalName.Timeout);
 
-        // Set position
-        Vector2 spawnPosition = Vector2.Zero;
-        // This is the simplest way to do spawn points, and works since the server is the authority
-        RandomNumberGenerator rng = new RandomNumberGenerator();
-        if (Data.Faction == Faction.Earth) {
-            spawnPosition.X = rng.RandfRange(Constants.EarthSpawn[0], Constants.EarthSpawn[0] + Constants.SpawnZoneWidth);
-            spawnPosition.Y = rng.RandfRange(Constants.EarthSpawn[1], Constants.EarthSpawn[1] + Constants.SpawnZoneHeight);
-        } if (Data.Faction == Faction.Mars) {
-            spawnPosition.X = rng.RandfRange(Constants.MarsSpawn[0], Constants.MarsSpawn[0] + Constants.SpawnZoneWidth);
-            spawnPosition.Y = rng.RandfRange(Constants.MarsSpawn[1], Constants.MarsSpawn[1] + Constants.SpawnZoneHeight);
-        }
-        Data.Position = spawnPosition;
-        //GD.Print($"Spawned {Data.MultiplayerID} at {spawnPosition.X}, {spawnPosition.Y}");
+        Data.Reset();
+        Data.Position = _server.RequestSpawnPosition(Data.Faction);
         Data.CurrentState = Scout.State.Alive;
-        //Data.Health = Constants.ScoutHealth;
     }
 }

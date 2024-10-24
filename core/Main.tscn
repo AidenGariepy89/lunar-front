@@ -32,6 +32,20 @@ position = Vector2(-5120, -4352)
 [node name="BottomRight" type="Marker2D" parent="Map"]
 position = Vector2(5120, 4352)
 
+[node name="EarthSpawnLeft" type="Marker2D" parent="Map"]
+position = Vector2(-3575, 0)
+
+[node name="EarthSpawnRight" type="Marker2D" parent="Map"]
+position = Vector2(-1019, 0)
+
+[node name="MarsSpawnLeft" type="Marker2D" parent="Map"]
+position = Vector2(1019, 0)
+
+[node name="MarsSpawnRight" type="Marker2D" parent="Map"]
+position = Vector2(3575, 0)
+
+[node name="Process" type="Node2D" parent="."]
+
 [node name="Scouts" type="Node2D" parent="."]
 
 [node name="Bullets" type="Node2D" parent="."]

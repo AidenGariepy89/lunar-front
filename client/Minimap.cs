@@ -72,6 +72,11 @@ public partial class Minimap : Node2D
         {
             var scout = child as ScoutClient;
 
+            if (scout.Data.CurrentState != Scout.State.Alive)
+            {
+                continue;
+            }
+
             Color color = (scout.Data.Faction == Faction.Earth) ? MinimapEarthTeam : MinimapMarsTeam;
 
             if (scout.Data.MultiplayerID == Multiplayer.GetUniqueId())
