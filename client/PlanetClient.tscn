@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://u8te8q6eobcs"]
+[gd_scene load_steps=11 format=3 uid="uid://u8te8q6eobcs"]
 
 [ext_resource type="Script" path="res://client/PlanetClient.cs" id="1_2yun0"]
 [ext_resource type="Texture2D" uid="uid://bqey3mli8u7ur" path="res://resources/textures/earth.png" id="2_1jttd"]
@@ -10,18 +10,58 @@ shader = ExtResource("3_2ugk0")
 shader_parameter/shieldColor = Color(0.34, 0.758, 1, 1)
 shader_parameter/shineColor = Color(0.69, 0.855333, 1, 1)
 shader_parameter/enabled = true
+shader_parameter/flash = 0.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_5iu1c"]
 shader = ExtResource("3_2ugk0")
 shader_parameter/shieldColor = Color(1, 0.473833, 0.23, 1)
 shader_parameter/shineColor = Color(1, 0.6945, 0.53, 1)
 shader_parameter/enabled = true
+shader_parameter/flash = 0.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dx30v"]
 shader = ExtResource("3_2ugk0")
 shader_parameter/shieldColor = Color(0.34, 0.758, 1, 1)
 shader_parameter/shineColor = Color(0.69, 0.855333, 1, 1)
 shader_parameter/enabled = true
+shader_parameter/flash = 0.0
+
+[sub_resource type="Animation" id="Animation_51sj3"]
+resource_name = "hit_flash"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:material:shader_parameter/flash")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1.0, 0.0]
+}
+
+[sub_resource type="Animation" id="Animation_8w2ee"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:material:shader_parameter/flash")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_k4uw2"]
+_data = {
+"RESET": SubResource("Animation_8w2ee"),
+"hit_flash": SubResource("Animation_51sj3")
+}
 
 [node name="PlanetClient" type="Node2D"]
 scale = Vector2(4, 4)
@@ -33,3 +73,8 @@ MarsShield = SubResource("ShaderMaterial_5iu1c")
 [node name="Sprite" type="Sprite2D" parent="."]
 material = SubResource("ShaderMaterial_dx30v")
 texture = ExtResource("2_1jttd")
+
+[node name="Animator" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_k4uw2")
+}

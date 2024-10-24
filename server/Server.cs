@@ -10,7 +10,7 @@ public partial class Server : Node2D
     public PackedScene ScoutScene;
     
     [Export]
-    public float SpawnDistFromEdge = 100.0f;
+    public float SpawnDistFromEdge = 200.0f;
 
     public Main MainRef;
     public long NextBulletId = 1;

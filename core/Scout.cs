@@ -29,7 +29,7 @@ public class Scout
 
     public static Vector2 NearZero = Vector2.One * 5.0f;
 
-    public const int MaxHealth = 7;
+    public const int MaxHealth = 5;
     public const double RespawnDelay = 5.0;
 
     // Input Variables

@@ -8,16 +8,20 @@ public partial class Client : Node2D
 {
     [Export]
     public PackedScene ScoutScene;
+    [Export]
+    public PackedScene TitleScene;
+    [Export]
+    public PackedScene HudScene;
 
     public Main MainRef;
     public PlanetClient Earth;
     public PlanetClient Mars;
+    public Hud Hud = null;
 
     bool _connected = false;
     Logger _log;
     long _currentSeqNum = -1;
 
-    Button _button;
     Timer _inputTimer;
     InputCollector _inputCollector;
     AudioStreamPlayer _music;
@@ -25,6 +29,8 @@ public partial class Client : Node2D
     ScoutClient _playerScout = null;
 
     bool _audioMuted = false;
+
+    TitleScreen _title = null;
 
     public override void _Ready()
     {
@@ -38,9 +44,6 @@ public partial class Client : Node2D
         Multiplayer.ConnectedToServer += ConnectedToServer;
         Multiplayer.ConnectionFailed += ConnectionFailed;
 
-        _button = GetNode<Button>("CanvasLayer/Button");
-        _button.Pressed += EstablishConnection;
-
         _inputTimer = GetNode<Timer>("InputTimer");
         _inputTimer.Timeout += InputTimeout;
 
@@ -48,15 +51,24 @@ public partial class Client : Node2D
         _inputCollector = GetNode<InputCollector>("InputCollector");
 
         _music = GetNode<AudioStreamPlayer>("Music");
+
+        _title = TitleScene.Instantiate<TitleScreen>();
+        _title.Initialize();
+        _title.JoinButton.Pressed += EstablishConnection;
+        GetNode<CanvasLayer>("CanvasLayer").AddChild(_title);
     }
 
     void EstablishConnection()
     {
+        var address = _title.IPEdit.Text;
+
         var peer = new ENetMultiplayerPeer();
-        var err = peer.CreateClient(Constants.Address, Constants.Port);
+        var err = peer.CreateClient(address, Constants.Port);
         if (err != Error.Ok)
         {
-            throw new System.Exception(err.ToString());
+            _log.Err(err.ToString());
+            _title.ErrMsg.Visible = true;
+            return;
         }
 
         Multiplayer.MultiplayerPeer = peer;
@@ -105,11 +117,14 @@ public partial class Client : Node2D
     }
 
     /// Called when current peer is joining for the first time.
-    public void JoinGame(Array<Array> scouts, Array<Array> bullets, Array earth, Array mars)
+    public void JoinGame(
+        Array<Array> scouts,
+        Array<Array> bullets,
+        Array earth,
+        Array mars
+    )
     {
         _log.Line($"Joining game");
-
-        RemoveChild(GetChild(0));
 
         MainRef.Map.Visible = true;
 
@@ -144,6 +159,11 @@ public partial class Client : Node2D
         }
 
         MainRef.Minimap.Initialize(MainRef);
+
+        _title.QueueFree();
+        Hud = HudScene.Instantiate<Hud>();
+        Hud.Initialize(Earth.Data.Score, Mars.Data.Score);
+        GetNode<CanvasLayer>("CanvasLayer").AddChild(Hud);
 
         _music.Play();
 
@@ -186,6 +206,7 @@ public partial class Client : Node2D
 
         Earth.Sync(Planet.Deserialize(earth));
         Mars.Sync(Planet.Deserialize(mars));
+        Hud.Update(Earth.Data.Score, Mars.Data.Score);
     }
 
     public void BulletShot(long shotById)

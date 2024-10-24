@@ -18,6 +18,8 @@ public partial class PlanetServer : Area2D
         _server = server;
 
         _regenTimer = GetNode<Timer>("Regen");
+        _regenTimer.Timeout += Regen;
+        _regenTimer.Start();
 
         Data = new Planet();
         Data.Faction = faction;
@@ -72,17 +74,17 @@ public partial class PlanetServer : Area2D
 
         if (Data.Faction == Faction.Earth)
         {
-            _server.MainRef.ScoreMars += score;
+            _server.Mars.Data.Score += score;
         }
         else
         {
-            _server.MainRef.ScoreEarth += score;
+            _server.Earth.Data.Score += score;
         }
 
         _server.MainRef.Rpc(
             Main.MethodName.PlanetBulletHit,
-            _server.MainRef.ScoreEarth,
-            _server.MainRef.ScoreMars,
+            _server.Earth.Data.Score,
+            _server.Mars.Data.Score,
             bullet.BulletId,
             Data.Serialize()
         );
@@ -92,5 +94,17 @@ public partial class PlanetServer : Area2D
 
     void ScoutHit(ScoutServer scout)
     {
+    }
+
+    void Regen()
+    {
+        Data.ShieldHealth += Planet.ShieldRegenRate;
+
+        if (Data.ShieldHealth >= Planet.ShieldMaxHealth)
+        {
+            Data.ShieldHealth = Planet.ShieldMaxHealth;
+            Data.ShieldUp = true;
+            return;
+        }
     }
 }

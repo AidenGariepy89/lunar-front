@@ -15,12 +15,14 @@ public partial class PlanetClient : Node2D
     public Planet Data;
 
     Sprite2D _sprite;
+    AnimationPlayer _animator;
 
     public void Initialize(Planet data)
     {
         Data = data;
 
         _sprite = GetNode<Sprite2D>("Sprite");
+        _animator = GetNode<AnimationPlayer>("Animator");
 
         if (Data.Faction == Faction.Earth)
         {
@@ -39,6 +41,7 @@ public partial class PlanetClient : Node2D
     {
         if (data.ShieldUp != Data.ShieldUp)
         {
+            GD.Print("hello");
             (_sprite.Material as ShaderMaterial).SetShaderParameter("enabled", data.ShieldUp);
         }
 
@@ -46,8 +49,18 @@ public partial class PlanetClient : Node2D
         QueueRedraw();
     }
 
+    public void HitAnimation()
+    {
+        if (_animator.IsPlaying())
+        {
+            _animator.Stop();
+        }
+
+        _animator.Play("hit_flash");
+    }
+
     public override void _Draw()
     {
-        DrawString(ThemeDB.FallbackFont, new Vector2(0, -70), $"{Data.ShieldHealth} / {Planet.ShieldMaxHealth}", fontSize: 36, modulate: Colors.White);
+        DrawString(ThemeDB.FallbackFont, new Vector2(0, -70), $"{(int)Data.ShieldHealth} / {Planet.ShieldMaxHealth}", fontSize: 36, modulate: Colors.White);
     }
 }

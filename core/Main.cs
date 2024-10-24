@@ -14,9 +14,6 @@ public partial class Main : Node2D
     [Export]
     public PackedScene BulletScene;
 
-    public int ScoreEarth = 0;
-    public int ScoreMars = 0;
-
     public Map Map;
     public Cam Cam;
     public Minimap Minimap;
@@ -96,7 +93,12 @@ public partial class Main : Node2D
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority)]
-    public void JoinGame(Array<Array> scouts, Array<Array> bullets, Array earth, Array mars)
+    public void JoinGame(
+        Array<Array> scouts,
+        Array<Array> bullets,
+        Array earth,
+        Array mars
+    )
     {
         if (_client == null)
         {
@@ -120,17 +122,21 @@ public partial class Main : Node2D
     [Rpc(MultiplayerApi.RpcMode.Authority)]
     public void HitScout(Array scoutPacket, long bulletId)
     {
-        if (_client != null)
+        if (_client == null)
         {
-            _client.HitScout(scoutPacket, bulletId);
+            return;
         }
+
+        _client.HitScout(scoutPacket, bulletId);
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority)]
     public void PlanetBulletHit(int earthScore, int marsScore, long bulletId, Array planetData)
     {
-        ScoreEarth = earthScore;
-        ScoreMars = marsScore;
+        if (_client == null)
+        {
+            return;
+        }
 
         var bullet = GetBulletById(bulletId);
         if (bullet != null)
@@ -138,10 +144,14 @@ public partial class Main : Node2D
             bullet.QueueFree();
         }
 
-        if (_client != null)
-        {
-            // client stuff
-        }
+        _client.Earth.Data.Score = earthScore;
+        _client.Mars.Data.Score = marsScore;
+        _client.Hud.Update(_client.Earth.Data.Score, _client.Mars.Data.Score);
+
+        var data = Planet.Deserialize(planetData);
+        var planet = (data.Faction == Faction.Earth) ? _client.Earth : _client.Mars;
+        planet.Sync(data);
+        planet.HitAnimation();
     }
 
     public ScoutBullet GetBulletById(long bulletId)

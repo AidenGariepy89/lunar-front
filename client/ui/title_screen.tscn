@@ -1,0 +1,78 @@
+[gd_scene load_steps=6 format=3 uid="uid://lydi5b2emhn7"]
+
+[ext_resource type="Script" path="res://client/ui/TitleScreen.cs" id="1_bdslx"]
+[ext_resource type="Texture2D" uid="uid://b3yit6q3ew6gn" path="res://resources/textures/MainMenuLogo.png" id="1_w3itu"]
+
+[sub_resource type="Gradient" id="Gradient_7f3l2"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0.957792, 1)
+colors = PackedColorArray(0.319255, 0.319255, 0.319255, 1, 0.162066, 0.162066, 0.162066, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_jo06b"]
+gradient = SubResource("Gradient_7f3l2")
+width = 128
+height = 48
+fill = 2
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_rwbdv"]
+font_color = Color(0.817521, 0.817521, 0.817521, 1)
+outline_size = 2
+outline_color = Color(0.353438, 0.353438, 0.353438, 1)
+
+[node name="TitleScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_bdslx")
+
+[node name="JoinButton" type="Button" parent="."]
+offset_left = 501.0
+offset_top = 240.0
+offset_right = 637.0
+offset_bottom = 296.0
+text = "Join Game"
+icon = SubResource("GradientTexture2D_jo06b")
+icon_alignment = 1
+
+[node name="RichTextLabel" type="TextureRect" parent="."]
+offset_left = 335.0
+offset_top = 55.0
+offset_right = 815.0
+offset_bottom = 195.0
+texture = ExtResource("1_w3itu")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="."]
+offset_left = 400.0
+offset_top = 404.0
+offset_right = 751.0
+offset_bottom = 505.0
+text = "In Game Controls:
+• WASD / Arrow keys for moving your ship
+• Spacebar / Left click to shoot from your ship
+• Mouse movement to rotate your ship"
+label_settings = SubResource("LabelSettings_rwbdv")
+
+[node name="IPAddress" type="LineEdit" parent="."]
+layout_mode = 0
+offset_left = 423.0
+offset_top = 339.0
+offset_right = 719.0
+offset_bottom = 370.0
+text = "127.0.0.1"
+
+[node name="ErrMsg" type="Label" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 425.0
+offset_top = 375.0
+offset_right = 716.0
+offset_bottom = 398.0
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+text = "Invalid IP Address"
+horizontal_alignment = 1

@@ -7,11 +7,11 @@
     d. [x] - Relay data to clients
 2. [x] - movement prediction
 3. [x] - shooting
-4. [ ] - damage and death
+4. [x] - damage and death
 5. [ ] - shield
 6. [x] - minimap
 7. [ ] - asteroids
-8. [ ] - planets
+8. [x] - planets
 9. [ ] - hud
 10. [ ] - options menu
 11. [ ] - boost

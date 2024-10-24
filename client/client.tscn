@@ -1,63 +1,18 @@
-[gd_scene load_steps=10 format=3 uid="uid://yw0raut60wko"]
+[gd_scene load_steps=8 format=3 uid="uid://yw0raut60wko"]
 
 [ext_resource type="Script" path="res://client/Client.cs" id="1_cq6i1"]
 [ext_resource type="PackedScene" uid="uid://c5i35ke47a16c" path="res://client/scout_client.tscn" id="2_ep25r"]
-[ext_resource type="Texture2D" uid="uid://b3yit6q3ew6gn" path="res://resources/textures/MainMenuLogo.png" id="3_jeagw"]
+[ext_resource type="PackedScene" uid="uid://lydi5b2emhn7" path="res://client/ui/title_screen.tscn" id="3_3jtjh"]
 [ext_resource type="Script" path="res://core/InputCollector.cs" id="3_yqipv"]
 [ext_resource type="PackedScene" uid="uid://u8te8q6eobcs" path="res://client/PlanetClient.tscn" id="4_ai0x6"]
+[ext_resource type="PackedScene" uid="uid://b1jm3gas7gbud" path="res://client/ui/hud.tscn" id="4_gdo7f"]
 [ext_resource type="AudioStream" uid="uid://doy76yby2pw8r" path="res://resources/sounds/LunarFront.mp3" id="5_1gfam"]
-
-[sub_resource type="Gradient" id="Gradient_7f3l2"]
-interpolation_mode = 2
-offsets = PackedFloat32Array(0.957792, 1)
-colors = PackedColorArray(0.319255, 0.319255, 0.319255, 1, 0.162066, 0.162066, 0.162066, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_6eb6s"]
-gradient = SubResource("Gradient_7f3l2")
-width = 128
-height = 48
-fill = 2
-fill_from = Vector2(0.5, 0.5)
-fill_to = Vector2(1, 1)
-
-[sub_resource type="LabelSettings" id="LabelSettings_clb3p"]
-font_color = Color(0.817521, 0.817521, 0.817521, 1)
-outline_size = 2
-outline_color = Color(0.353438, 0.353438, 0.353438, 1)
 
 [node name="Client" type="Node2D"]
 script = ExtResource("1_cq6i1")
 ScoutScene = ExtResource("2_ep25r")
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="Button" type="Button" parent="CanvasLayer"]
-offset_left = 501.0
-offset_top = 240.0
-offset_right = 637.0
-offset_bottom = 296.0
-text = "Join Game"
-icon = SubResource("GradientTexture2D_6eb6s")
-icon_alignment = 1
-
-[node name="RichTextLabel" type="TextureRect" parent="CanvasLayer"]
-offset_left = 335.0
-offset_top = 55.0
-offset_right = 815.0
-offset_bottom = 195.0
-texture = ExtResource("3_jeagw")
-expand_mode = 2
-
-[node name="Label" type="Label" parent="CanvasLayer"]
-offset_left = 400.0
-offset_top = 350.0
-offset_right = 745.0
-offset_bottom = 451.0
-text = "In Game Controls:
-• WASD / Arrow keys for moving your ship
-• Spacebar / Left click to shoot from your ship
-• Mouse movement to rotate your ship"
-label_settings = SubResource("LabelSettings_clb3p")
+TitleScene = ExtResource("3_3jtjh")
+HudScene = ExtResource("4_gdo7f")
 
 [node name="Earth" parent="." instance=ExtResource("4_ai0x6")]
 position = Vector2(-488, 0)
@@ -75,3 +30,5 @@ wait_time = 0.05
 stream = ExtResource("5_1gfam")
 volume_db = -7.235
 bus = &"Music"
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
