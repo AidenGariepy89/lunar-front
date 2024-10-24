@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://d3la36q14cqmo"]
+
+[ext_resource type="Script" path="res://server/PlanetServer.cs" id="1_rtlt4"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_gjbof"]
+radius = 64.0
+
+[node name="PlanetServer" type="Area2D"]
+scale = Vector2(4, 4)
+script = ExtResource("1_rtlt4")
+
+[node name="Hitbox" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_gjbof")
+
+[node name="Regen" type="Timer" parent="."]

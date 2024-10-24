@@ -50,7 +50,7 @@ public struct InputPacket
     }
 }
 
-public struct BulletPacket
+public struct BulletSpawnPacket
 {
     public long BulletId;
     public Vector2 Position;
@@ -58,9 +58,9 @@ public struct BulletPacket
     public float Rotation;
     public Faction Faction;
 
-    public static BulletPacket Deconstruct(Array data)
+    public static BulletSpawnPacket Deconstruct(Array data)
     {
-        var packet = new BulletPacket();
+        var packet = new BulletSpawnPacket();
 
         packet.BulletId = (long)data[0];
         packet.Position = (Vector2)data[1];
@@ -80,6 +80,32 @@ public struct BulletPacket
         arr.Add(velocity);
         arr.Add(rotation);
         arr.Add((int)faction);
+
+        return arr;
+    }
+}
+
+public struct BulletPacket
+{
+    public long BulletId;
+    public Vector2 Position;
+
+    public static BulletPacket Deconstruct(Array data)
+    {
+        var packet = new BulletPacket();
+
+        packet.BulletId = (long)data[0];
+        packet.Position = (Vector2)data[1];
+
+        return packet;
+    }
+    
+    public static Array Construct(long bulletId, Vector2 position)
+    {
+        var arr = new Array();
+
+        arr.Add(bulletId);
+        arr.Add(position);
 
         return arr;
     }

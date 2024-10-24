@@ -6,8 +6,8 @@ namespace Core;
 public interface NetworkObject
 {
     void DeliverInput(Array input);
-    void ReceiveSync(long seqNum, Array<Array> syncData);
+    void ReceiveSync(long seqNum, Array<Array> scouts, Array earth, Array mars);
     void SpawnNewScout(Array scoutPacket);
-    void SpawnScouts(Array<Array> scouts);
-    public void HitScout(Array scoutPacket, long BulletId);
+    void HitScout(Array scoutPacket, long BulletId);
+    void JoinGame(Array<Array> scouts, Array earth, Array mars);
 }

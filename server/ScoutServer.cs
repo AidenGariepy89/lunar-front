@@ -155,13 +155,16 @@ public partial class ScoutServer : Area2D
             spawnPos = _bulletSpawnRight.GlobalPosition;
         }
 
-        var packet = BulletPacket.Construct(
+        var packet = BulletSpawnPacket.Construct(
             _server.NextBulletId,
             spawnPos,
             (Vector2.Right * Scout.ShootBulletSpeed).Rotated(Data.Rotation) + Data.Velocity,
             Rotation,
             Data.Faction
         );
+
+        _server.NextBulletId = (_server.NextBulletId + 1) % long.MaxValue;
+
         _server.MainRef.Rpc(
             Core.Main.MethodName.SpawnNewBullet,
             Data.MultiplayerID,

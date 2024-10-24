@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://yw0raut60wko"]
+[gd_scene load_steps=10 format=3 uid="uid://yw0raut60wko"]
 
 [ext_resource type="Script" path="res://client/Client.cs" id="1_cq6i1"]
 [ext_resource type="PackedScene" uid="uid://c5i35ke47a16c" path="res://client/scout_client.tscn" id="2_ep25r"]
 [ext_resource type="Texture2D" uid="uid://b3yit6q3ew6gn" path="res://resources/textures/MainMenuLogo.png" id="3_jeagw"]
 [ext_resource type="Script" path="res://core/InputCollector.cs" id="3_yqipv"]
+[ext_resource type="PackedScene" uid="uid://u8te8q6eobcs" path="res://client/PlanetClient.tscn" id="4_ai0x6"]
 [ext_resource type="AudioStream" uid="uid://doy76yby2pw8r" path="res://resources/sounds/LunarFront.mp3" id="5_1gfam"]
 
 [sub_resource type="Gradient" id="Gradient_7f3l2"]
@@ -57,6 +58,12 @@ text = "In Game Controls:
 • Spacebar / Left click to shoot from your ship
 • Mouse movement to rotate your ship"
 label_settings = SubResource("LabelSettings_clb3p")
+
+[node name="Earth" parent="." instance=ExtResource("4_ai0x6")]
+position = Vector2(-488, 0)
+
+[node name="Mars" parent="." instance=ExtResource("4_ai0x6")]
+position = Vector2(424, 0)
 
 [node name="InputCollector" type="Node2D" parent="."]
 script = ExtResource("3_yqipv")

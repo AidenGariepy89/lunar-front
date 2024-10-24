@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cqrcmvdct72s5" path="res://resources/textures/bg_grid.png" id="4_o6fav"]
 [ext_resource type="Script" path="res://core/Map.cs" id="4_rogdi"]
 [ext_resource type="Script" path="res://core/Cam.cs" id="6_t8t8k"]
-[ext_resource type="PackedScene" uid="uid://otwnnfduatue" path="res://core/minimap.tscn" id="8_vyb0m"]
+[ext_resource type="PackedScene" uid="uid://otwnnfduatue" path="res://client/minimap.tscn" id="8_vyb0m"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_be0g3")

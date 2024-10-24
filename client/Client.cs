@@ -4,12 +4,14 @@ using Core;
 
 namespace Client;
 
-public partial class Client : Node2D, NetworkObject
+public partial class Client : Node2D
 {
     [Export]
     public PackedScene ScoutScene;
 
     public Main MainRef;
+    public PlanetClient Earth;
+    public PlanetClient Mars;
 
     bool _connected = false;
     Logger _log;
@@ -26,6 +28,11 @@ public partial class Client : Node2D, NetworkObject
 
     public override void _Ready()
     {
+        Earth = GetNode<PlanetClient>("Earth");
+        Earth.Visible = false;
+        Mars = GetNode<PlanetClient>("Mars");
+        Mars.Visible = false;
+
         Multiplayer.PeerConnected += PeerConnected;
         Multiplayer.PeerDisconnected += PeerDisconnected;
         Multiplayer.ConnectedToServer += ConnectedToServer;
@@ -56,8 +63,6 @@ public partial class Client : Node2D, NetworkObject
 
         _log.MultiplayerId = peer.GetUniqueId();
         _log.Line("Established client.");
-
-        MainRef.Map.Visible = true;
     }
 
     public override void _Process(double delta)
@@ -100,9 +105,18 @@ public partial class Client : Node2D, NetworkObject
     }
 
     /// Called when current peer is joining for the first time.
-    public void SpawnScouts(Array<Array> scouts)
+    public void JoinGame(Array<Array> scouts, Array earth, Array mars)
     {
-        _log.Line($"SpawnScouts - {scouts.Count}");
+        _log.Line($"Joining game");
+
+        RemoveChild(GetChild(0));
+
+        MainRef.Map.Visible = true;
+
+        Earth.Initialize(Planet.Deserialize(earth));
+        Earth.Visible = true;
+        Mars.Initialize(Planet.Deserialize(mars));
+        Mars.Visible = true;
 
         foreach (var scout in scouts)
         {
@@ -123,9 +137,23 @@ public partial class Client : Node2D, NetworkObject
 
             _log.Line("Spawned scout");
         }
+
+        MainRef.Minimap.Initialize(MainRef);
+
+        _music.Play();
+
+        _inputTimer.Start();
+        _inputCollector.StartCollection();
+        _connected = true;
     }
 
-    public void ReceiveSync(long seqNum, Array<Array> syncData)
+    public void ReceiveSync(
+        long seqNum,
+        Array<Array> scouts,
+        Array<Array> bullets,
+        Array earth,
+        Array mars
+    )
     {
         // If seqNum is a past seqNum and we are sure a wrap did not happen, then ignore
         if (seqNum <= _currentSeqNum && (seqNum > 1000 || _currentSeqNum < long.MaxValue - 1000))
@@ -134,11 +162,21 @@ public partial class Client : Node2D, NetworkObject
         }
         _currentSeqNum = seqNum;
 
-        foreach (var data in syncData)
+        foreach (var data in scouts)
         {
             var scoutData = Scout.Deserialize(data);
             GetScoutById(scoutData.MultiplayerID).Sync(scoutData);
         }
+
+        foreach (var data in bullets)
+        {
+            var bulletPacket = BulletPacket.Deconstruct(data);
+
+            MainRef.GetBulletById(bulletPacket.BulletId).Position = bulletPacket.Position;
+        }
+
+        Earth.Sync(Planet.Deserialize(earth));
+        Mars.Sync(Planet.Deserialize(mars));
     }
 
     public void BulletShot(long shotById)
@@ -163,16 +201,6 @@ public partial class Client : Node2D, NetworkObject
     void ConnectedToServer()
     {
         _log.Line("Connected to server!");
-
-        RemoveChild(GetChild(0));
-
-        MainRef.Minimap.Initialize(MainRef);
-
-        _music.Play();
-
-        _inputTimer.Start();
-        _inputCollector.StartCollection();
-        _connected = true;
     }
 
     void ConnectionFailed()

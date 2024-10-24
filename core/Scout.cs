@@ -52,7 +52,7 @@ public class Scout
 
     public long MultiplayerID;
     public Faction Faction = Faction.Earth;
-    public float Health = MaxHealth;
+    public int Health = MaxHealth;
     public State CurrentState = State.Alive;
 
     public Vector2 Position;

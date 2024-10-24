@@ -4,15 +4,18 @@ using Core;
 
 namespace Server;
 
-public partial class Server : Node2D, NetworkObject
+public partial class Server : Node2D
 {
     [Export]
     public PackedScene ScoutScene;
 
-    public Core.Main MainRef;
+    public Main MainRef;
     public long NextBulletId = 1;
+    public PlanetServer Earth;
+    public PlanetServer Mars;
 
     Logger _log;
+    RandomNumberGenerator _rng;
 
     Timer _syncTimer;
 
@@ -23,6 +26,13 @@ public partial class Server : Node2D, NetworkObject
         _syncTimer = GetNode<Timer>("SyncTimer");
         _syncTimer.WaitTime = 0.0625f;
         _syncTimer.Timeout += SyncTimeout;
+
+        _rng = new RandomNumberGenerator();
+
+        Earth = GetNode<PlanetServer>("Earth");
+        Earth.Initialize(Faction.Earth, this);
+        Mars = GetNode<PlanetServer>("Mars");
+        Mars.Initialize(Faction.Mars, this);
 
         Multiplayer.PeerConnected += PeerConnected;
         Multiplayer.PeerDisconnected += PeerDisconnected;
@@ -52,19 +62,7 @@ public partial class Server : Node2D, NetworkObject
         Faction faction = FactionJoin();
         var scout = ScoutScene.Instantiate<ScoutServer>();
         scout.Name = id.ToString();
-
-        Vector2 spawnPosition = Vector2.Zero;
-        // This is the simplest way to do spawn points, and works since the server is the authority
-        RandomNumberGenerator rng = new RandomNumberGenerator();
-        if (faction == Faction.Earth) {
-            spawnPosition.X = rng.RandfRange(Constants.EarthSpawn[0], Constants.EarthSpawn[0] + Constants.SpawnZoneWidth);
-            spawnPosition.Y = rng.RandfRange(Constants.EarthSpawn[1], Constants.EarthSpawn[1] + Constants.SpawnZoneHeight);
-        } if (faction == Faction.Mars) {
-            spawnPosition.X = rng.RandfRange(Constants.MarsSpawn[0], Constants.MarsSpawn[0] + Constants.SpawnZoneWidth);
-            spawnPosition.Y = rng.RandfRange(Constants.MarsSpawn[1], Constants.MarsSpawn[1] + Constants.SpawnZoneHeight);
-        }
-        scout.Position = spawnPosition;
-        //_log.Line($"Spawned {id} at {spawnPosition.X}, {spawnPosition.Y}");
+        scout.Position = RequestSpawnPosition(faction);
         scout.Initialize(id, faction, this);
 
         var existingScouts = new Array<Godot.Collections.Array>();
@@ -82,12 +80,12 @@ public partial class Server : Node2D, NetworkObject
 
         var newScoutData = scout.Data.Serialize();
 
-        existingScouts.Add(newScoutData); // If the newScout is added here, why is there an Rpc call to spawn the new scout *and* the existingScouts?
+        existingScouts.Add(newScoutData);
 
         MainRef.Scouts.AddChild(scout);
 
-        MainRef.Rpc(Core.Main.MethodName.SpawnNewScout, newScoutData);
-        MainRef.RpcId(id, Core.Main.MethodName.SpawnScouts, existingScouts);
+        MainRef.Rpc(Main.MethodName.SpawnNewScout, newScoutData);
+        MainRef.RpcId(id, Main.MethodName.JoinGame, existingScouts, Earth.Data.Serialize(), Mars.Data.Serialize());
     }
 
     /// Every peer
@@ -137,34 +135,47 @@ public partial class Server : Node2D, NetworkObject
         GetScoutById(packet.Id).UpdateInput(packet);
     }
 
-    public void HitScout(Array scoutPacket, long BulletId) {
-        _log.Line("HitScout was called on the server!");
-    }
-
-    public void SpawnNewScout(Array scoutPacket) { }
-    public void SpawnScouts(Array<Array> scouts) { }
-    public void ReceiveSync(long seqNum, Array<Array> syncData) { }
-
     void SyncTimeout()
     {
-        var packet = new Array<Array>();
+        var needsSync = false;
 
+        var scoutPackets = new Array<Array>();
         foreach (var child in MainRef.Scouts.GetChildren())
         {
             var scout = child as ScoutServer;
 
             if (scout.NeedsSync())
             {
-                packet.Add(scout.Data.Serialize());
+                scoutPackets.Add(scout.Data.Serialize());
             }
         }
+        needsSync = needsSync || scoutPackets.Count != 0;
 
-        if (packet.Count == 0)
+        var bulletPackets = new Array<Array>();
+        foreach (var child in MainRef.Bullets.GetChildren())
+        {
+            var bullet = child as ScoutBullet;
+
+            bulletPackets.Add(BulletPacket.Construct(bullet.BulletId, bullet.Position));
+        }
+        needsSync = needsSync || bulletPackets.Count != 0;
+
+        needsSync = needsSync || Earth.NeedsSync();
+        needsSync = needsSync || Mars.NeedsSync();
+
+        if (!needsSync)
         {
             return;
         }
 
-        MainRef.Rpc(Core.Main.MethodName.ReceiveSync, _currentSeqNum, packet);
+        MainRef.Rpc(
+            Core.Main.MethodName.ReceiveSync,
+            _currentSeqNum,
+            scoutPackets,
+            bulletPackets,
+            Earth.Data.Serialize(),
+            Mars.Data.Serialize()
+        );
         _currentSeqNum = (_currentSeqNum + 1) % long.MaxValue;
     }
 
@@ -180,5 +191,23 @@ public partial class Server : Node2D, NetworkObject
         }
 
         return null;
+    }
+
+    Vector2 RequestSpawnPosition(Faction faction)
+    {
+        Vector2 spawnPosition = Vector2.Zero;
+        // This is the simplest way to do spawn points, and works since the server is the authority
+        if (faction == Faction.Earth)
+        {
+            spawnPosition.X = _rng.RandfRange(Constants.EarthSpawn[0], Constants.EarthSpawn[0] + Constants.SpawnZoneWidth);
+            spawnPosition.Y = _rng.RandfRange(Constants.EarthSpawn[1], Constants.EarthSpawn[1] + Constants.SpawnZoneHeight);
+        }
+        else
+        {
+            spawnPosition.X = _rng.RandfRange(Constants.MarsSpawn[0], Constants.MarsSpawn[0] + Constants.SpawnZoneWidth);
+            spawnPosition.Y = _rng.RandfRange(Constants.MarsSpawn[1], Constants.MarsSpawn[1] + Constants.SpawnZoneHeight);
+        }
+
+        return spawnPosition;
     }
 }

@@ -1,0 +1,35 @@
+[gd_scene load_steps=8 format=3 uid="uid://u8te8q6eobcs"]
+
+[ext_resource type="Script" path="res://client/PlanetClient.cs" id="1_2yun0"]
+[ext_resource type="Texture2D" uid="uid://bqey3mli8u7ur" path="res://resources/textures/earth.png" id="2_1jttd"]
+[ext_resource type="Texture2D" uid="uid://e8xfvg31skd7" path="res://resources/textures/mars.png" id="2_qxtr5"]
+[ext_resource type="Shader" path="res://client/Shield.gdshader" id="3_2ugk0"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qpucl"]
+shader = ExtResource("3_2ugk0")
+shader_parameter/shieldColor = Color(0.34, 0.758, 1, 1)
+shader_parameter/shineColor = Color(0.69, 0.855333, 1, 1)
+shader_parameter/enabled = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5iu1c"]
+shader = ExtResource("3_2ugk0")
+shader_parameter/shieldColor = Color(1, 0.473833, 0.23, 1)
+shader_parameter/shineColor = Color(1, 0.6945, 0.53, 1)
+shader_parameter/enabled = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dx30v"]
+shader = ExtResource("3_2ugk0")
+shader_parameter/shieldColor = Color(0.34, 0.758, 1, 1)
+shader_parameter/shineColor = Color(0.69, 0.855333, 1, 1)
+shader_parameter/enabled = true
+
+[node name="PlanetClient" type="Node2D"]
+scale = Vector2(4, 4)
+script = ExtResource("1_2yun0")
+SpriteMars = ExtResource("2_qxtr5")
+EarthShield = SubResource("ShaderMaterial_qpucl")
+MarsShield = SubResource("ShaderMaterial_5iu1c")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_dx30v")
+texture = ExtResource("2_1jttd")

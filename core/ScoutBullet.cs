@@ -4,6 +4,8 @@ namespace Core;
 
 public partial class ScoutBullet : Area2D
 {
+    public const int Damage = 1;
+
     [Export]
     public Texture2D EarthTexture;
     [Export]

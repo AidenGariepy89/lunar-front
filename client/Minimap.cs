@@ -24,12 +24,19 @@ public partial class Minimap : Node2D
     Main _mainRef;
 
     Timer _refresh;
+    Timer _blink;
     bool _activated = false;
+    bool _planetBlink = true;
 
     public override void _Ready()
     {
         _refresh = GetNode<Timer>("Refresh");
-        _refresh.Timeout += Refresh;
+        _refresh.Timeout += () => QueueRedraw();
+
+        _blink = GetNode<Timer>("Blink");
+        _blink.Timeout += () => {
+            _planetBlink = !_planetBlink;
+        };
     }
 
     public override void _Draw()
@@ -46,6 +53,20 @@ public partial class Minimap : Node2D
         var bgColor = MinimapBackground;
         bgColor.A = Alpha;
         DrawRect(new Rect2(start, end), bgColor);
+
+        if (_planetBlink)
+        {
+            DrawCircle(
+                start + end * 0.5f + Planet.EarthPosition * ScaleRatio,
+                MarkerRadius + 1f,
+                MinimapEarthTeam
+            );
+            DrawCircle(
+                start + end * 0.5f + Planet.MarsPosition * ScaleRatio,
+                MarkerRadius + 1f,
+                MinimapMarsTeam
+            );
+        }
 
         foreach (var child in _mainRef.Scouts.GetChildren())
         {
@@ -77,13 +98,9 @@ public partial class Minimap : Node2D
         _mainRef = mainRef;
 
         _refresh.Start();
+        _blink.Start();
         _activated = true;
 
-        QueueRedraw();
-    }
-
-    void Refresh()
-    {
         QueueRedraw();
     }
 }
