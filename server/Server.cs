@@ -52,9 +52,22 @@ public partial class Server : Node2D, NetworkObject
         Faction faction = FactionJoin();
         var scout = ScoutScene.Instantiate<ScoutServer>();
         scout.Name = id.ToString();
+
+        Vector2 spawnPosition = Vector2.Zero;
+        // This is the simplest way to do spawn points, and works since the server is the authority
+        RandomNumberGenerator rng = new RandomNumberGenerator();
+        if (faction == Faction.Earth) {
+            spawnPosition.X = rng.RandfRange(Constants.EarthSpawn[0], Constants.EarthSpawn[0] + Constants.SpawnZoneWidth);
+            spawnPosition.Y = rng.RandfRange(Constants.EarthSpawn[1], Constants.EarthSpawn[1] + Constants.SpawnZoneHeight);
+        } if (faction == Faction.Mars) {
+            spawnPosition.X = rng.RandfRange(Constants.MarsSpawn[0], Constants.MarsSpawn[0] + Constants.SpawnZoneWidth);
+            spawnPosition.Y = rng.RandfRange(Constants.MarsSpawn[1], Constants.MarsSpawn[1] + Constants.SpawnZoneHeight);
+        }
+        scout.Position = spawnPosition;
+        //_log.Line($"Spawned {id} at {spawnPosition.X}, {spawnPosition.Y}");
         scout.Initialize(id, faction, this);
 
-        var existingScouts = new Array<Array>();
+        var existingScouts = new Array<Godot.Collections.Array>();
 
         foreach (var child in MainRef.Scouts.GetChildren())
         {
@@ -69,7 +82,7 @@ public partial class Server : Node2D, NetworkObject
 
         var newScoutData = scout.Data.Serialize();
 
-        existingScouts.Add(newScoutData);
+        existingScouts.Add(newScoutData); // If the newScout is added here, why is there an Rpc call to spawn the new scout *and* the existingScouts?
 
         MainRef.Scouts.AddChild(scout);
 
@@ -122,6 +135,10 @@ public partial class Server : Node2D, NetworkObject
         var packet = InputPacket.Deconstruct(input);
 
         GetScoutById(packet.Id).UpdateInput(packet);
+    }
+
+    public void HitScout(Array scoutPacket, long BulletId) {
+        _log.Line("HitScout was called on the server!");
     }
 
     public void SpawnNewScout(Array scoutPacket) { }

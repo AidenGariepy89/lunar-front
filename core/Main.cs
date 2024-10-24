@@ -97,4 +97,9 @@ public partial class Main : Node2D, NetworkObject
             client.BulletShot(shotById);
         }
     }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority)]
+    public void HitScout(Array scoutPacket, long BulletId) {
+        _networkObject.HitScout(scoutPacket, BulletId);
+    }
 }

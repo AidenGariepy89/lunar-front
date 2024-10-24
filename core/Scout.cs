@@ -56,6 +56,7 @@ public class Scout
     public State CurrentState = State.Alive;
 
     public Vector2 Position;
+    public Vector2 SpawnPosition;
     public Vector2 Velocity;
     public float Rotation;
 

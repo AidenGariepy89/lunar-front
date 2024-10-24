@@ -9,7 +9,7 @@ public partial class Client : Node2D, NetworkObject
     [Export]
     public PackedScene ScoutScene;
 
-    public Core.Main MainRef;
+    public Main MainRef;
 
     bool _connected = false;
     Logger _log;
@@ -191,6 +191,27 @@ public partial class Client : Node2D, NetworkObject
         }
 
         _inputCollector.StartCollection();
+    }
+
+    // Mostly for visuals, since the respawn position and alive/dead state will be updated by the server
+    public void HitScout(Array scoutPacket, long BulletId) {
+        // Here, we want to start the explosion
+        // We also want to delete the bullet
+        var scout = Scout.Deserialize(scoutPacket);
+        _log.Line($"Client was sent a death for id: {scout.MultiplayerID}!");
+        var scoutObject = GetScoutById(scout.MultiplayerID);
+        scoutObject.PlayExplosion();
+        ScoutBullet bullet = GetBulletById(BulletId);
+        if (bullet != null) {bullet.QueueFree();}
+    }
+
+    ScoutBullet GetBulletById(long id) {
+        foreach (var child in MainRef.Bullets.GetChildren()) {
+            if (child.Name == id.ToString()) {
+                return child as ScoutBullet;
+            }
+        }
+        return null;
     }
 
     ScoutClient GetScoutById(long id)

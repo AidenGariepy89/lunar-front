@@ -9,5 +9,5 @@ public interface NetworkObject
     void ReceiveSync(long seqNum, Array<Array> syncData);
     void SpawnNewScout(Array scoutPacket);
     void SpawnScouts(Array<Array> scouts);
-    // void SpawnNewBullet(Vector2 position, Vector2 velocity, float rotation, int faction);
+    public void HitScout(Array scoutPacket, long BulletId);
 }

@@ -15,6 +15,8 @@ public partial class ScoutClient : Area2D
     public Texture2D SpriteLeftwardThrust;
     [Export]
     public Texture2D SpriteRightwardThrust;
+    [Export]
+    public PackedScene ExplosionScene;
 
     public Scout Data;
     public bool IsPlayerScout = false;
@@ -54,6 +56,11 @@ public partial class ScoutClient : Area2D
 
     public override void _Process(double delta)
     {
+        if (Data.CurrentState == Scout.State.Dead) {
+            Visible = false;
+        } else {
+            Visible = true;
+        }
         float dt = (float)delta;
 
         if (Data.MultiplayerID == Multiplayer.GetUniqueId())
@@ -102,5 +109,14 @@ public partial class ScoutClient : Area2D
     public void ShotBullet()
     {
         _shootAudio.Play();
+    }
+    public void PlayExplosion() {
+        // Here, we play the explosion animation
+        // Instance the explosion scene
+        if (Visible == true) {
+            var explosion = ExplosionScene.Instantiate<Node2D>();
+            explosion.Position = Position;
+            AddChild(explosion);
+        }
     }
 }
