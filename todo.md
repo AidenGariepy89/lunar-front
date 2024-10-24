@@ -9,3 +9,8 @@
 3. [x] - shooting
 4. [ ] - damage and death
 5. [ ] - shield
+6. [x] - minimap
+7. [ ] - asteroids
+8. [ ] - planets
+9. [ ] - hud
+10. [ ] - options menu
