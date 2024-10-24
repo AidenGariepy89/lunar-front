@@ -154,6 +154,8 @@ public partial class Client : Node2D, NetworkObject
 
         RemoveChild(GetChild(0));
 
+        MainRef.Minimap.Initialize(MainRef);
+
         _inputTimer.Start();
         _inputCollector.StartCollection();
         _connected = true;

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://thyyk6c6vjq4"]
+[gd_scene load_steps=9 format=3 uid="uid://thyyk6c6vjq4"]
 
 [ext_resource type="Script" path="res://core/Main.cs" id="1_be0g3"]
 [ext_resource type="PackedScene" uid="uid://cm1842xm45mg5" path="res://server/server.tscn" id="2_ij2f1"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cqrcmvdct72s5" path="res://resources/bg_grid.png" id="4_o6fav"]
 [ext_resource type="Script" path="res://core/Map.cs" id="4_rogdi"]
 [ext_resource type="Script" path="res://core/Cam.cs" id="6_t8t8k"]
+[ext_resource type="PackedScene" uid="uid://otwnnfduatue" path="res://core/minimap.tscn" id="8_vyb0m"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_be0g3")
@@ -30,9 +31,11 @@ position = Vector2(-5120, -4352)
 [node name="BottomRight" type="Marker2D" parent="Map"]
 position = Vector2(5120, 4352)
 
-[node name="Cam" type="Camera2D" parent="."]
-script = ExtResource("6_t8t8k")
-
 [node name="Scouts" type="Node2D" parent="."]
 
 [node name="Bullets" type="Node2D" parent="."]
+
+[node name="Cam" type="Camera2D" parent="."]
+script = ExtResource("6_t8t8k")
+
+[node name="Minimap" parent="Cam" instance=ExtResource("8_vyb0m")]

@@ -16,6 +16,7 @@ public partial class Main : Node2D, NetworkObject
 
     public Map Map;
     public Cam Cam;
+    public Minimap Minimap;
 
     public Node2D Scouts;
     public Node2D Bullets;
@@ -32,6 +33,8 @@ public partial class Main : Node2D, NetworkObject
 
         Cam = GetNode<Cam>("Cam");
         Cam.Instantiate(Map.TopLeft, Map.BottomRight);
+
+        Minimap = GetNode<Minimap>("Cam/Minimap");
 
         if (OS.GetCmdlineArgs().Contains("--server"))
         {
