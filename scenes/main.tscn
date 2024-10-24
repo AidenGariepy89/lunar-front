@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://src/Main.cs" id="1_7afpe"]
 [ext_resource type="PackedScene" uid="uid://bt7vhqci5ip13" path="res://scenes/game.tscn" id="1_ow7f5"]
 [ext_resource type="Script" path="res://src/Lobby.cs" id="2_tfh3f"]
-[ext_resource type="Texture2D" uid="uid://b3yit6q3ew6gn" path="res://resources/MainMenuLogo.png" id="4_840rg"]
+[ext_resource type="Texture2D" uid="uid://b3yit6q3ew6gn" path="res://resources/textures/MainMenuLogo.png" id="4_840rg"]
 
 [sub_resource type="Gradient" id="Gradient_7f3l2"]
 interpolation_mode = 2

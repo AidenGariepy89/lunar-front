@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c0dbom2pota7w"
-path="res://.godot/imported/earth_bullet.png-efabfa3794940a240c7c41db06756aa5.ctex"
+uid="uid://nr8hl1csj67g"
+path="res://.godot/imported/scout2.png-dd5266c2baae235c6ea3088717e1669f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://resources/earth_bullet.png"
-dest_files=["res://.godot/imported/earth_bullet.png-efabfa3794940a240c7c41db06756aa5.ctex"]
+source_file="res://resources/textures/scout2.png"
+dest_files=["res://.godot/imported/scout2.png-dd5266c2baae235c6ea3088717e1669f.ctex"]
 
 [params]
 

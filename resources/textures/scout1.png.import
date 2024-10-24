@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://xam2eapv8lmk"
-path="res://.godot/imported/scout4.png-e1e7346a5dc0ca449c4724d3c8c6fee7.ctex"
+uid="uid://cjjo56sb2fsdd"
+path="res://.godot/imported/scout1.png-cdb754ef950468ea95a99e2e8090621a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://resources/scout4.png"
-dest_files=["res://.godot/imported/scout4.png-e1e7346a5dc0ca449c4724d3c8c6fee7.ctex"]
+source_file="res://resources/textures/scout1.png"
+dest_files=["res://.godot/imported/scout1.png-cdb754ef950468ea95a99e2e8090621a.ctex"]
 
 [params]
 

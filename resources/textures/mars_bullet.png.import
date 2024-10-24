@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d3y4r2pt6yhbn"
-path="res://.godot/imported/scout_shield_flash.png-08342fc254859888a305bc0d66389dba.ctex"
+uid="uid://1h264shaj3wv"
+path="res://.godot/imported/mars_bullet.png-b0be331cd0cfc1e75aeaa20ce60d0c26.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://resources/scout_shield_flash.png"
-dest_files=["res://.godot/imported/scout_shield_flash.png-08342fc254859888a305bc0d66389dba.ctex"]
+source_file="res://resources/textures/mars_bullet.png"
+dest_files=["res://.godot/imported/mars_bullet.png-b0be331cd0cfc1e75aeaa20ce60d0c26.ctex"]
 
 [params]
 

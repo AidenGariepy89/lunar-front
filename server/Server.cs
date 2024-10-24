@@ -124,10 +124,6 @@ public partial class Server : Node2D, NetworkObject
         GetScoutById(packet.Id).UpdateInput(packet);
     }
 
-    public void SpawnNewBullet(Vector2 position, Vector2 velocity, float rotation, int faction)
-    {
-    }
-
     public void SpawnNewScout(Array scoutPacket) { }
     public void SpawnScouts(Array<Array> scouts) { }
     public void ReceiveSync(long seqNum, Array<Array> syncData) { }

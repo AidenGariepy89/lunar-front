@@ -18,8 +18,11 @@ public partial class Client : Node2D, NetworkObject
     Button _button;
     Timer _inputTimer;
     InputCollector _inputCollector;
+    AudioStreamPlayer _music;
 
     ScoutClient _playerScout = null;
+
+    bool _audioMuted = false;
 
     public override void _Ready()
     {
@@ -36,6 +39,8 @@ public partial class Client : Node2D, NetworkObject
 
         _log = new Logger(-1, "client");
         _inputCollector = GetNode<InputCollector>("InputCollector");
+
+        _music = GetNode<AudioStreamPlayer>("Music");
     }
 
     void EstablishConnection()
@@ -65,6 +70,12 @@ public partial class Client : Node2D, NetworkObject
         float dt = (float)delta;
 
         _inputCollector.Update(dt);
+
+        if (Input.IsActionJustPressed("debug"))
+        {
+            _audioMuted = !_audioMuted;
+            AudioServer.SetBusMute(AudioServer.GetBusIndex("Music"), _audioMuted);
+        }
     }
 
     public void DeliverInput(Array input) { }
@@ -114,10 +125,6 @@ public partial class Client : Node2D, NetworkObject
         }
     }
 
-    public void SpawnNewBullet(Vector2 position, Vector2 velocity, float rotation, int faction)
-    {
-    }
-
     public void ReceiveSync(long seqNum, Array<Array> syncData)
     {
         // If seqNum is a past seqNum and we are sure a wrap did not happen, then ignore
@@ -132,6 +139,11 @@ public partial class Client : Node2D, NetworkObject
             var scoutData = Scout.Deserialize(data);
             GetScoutById(scoutData.MultiplayerID).Sync(scoutData);
         }
+    }
+
+    public void BulletShot(long shotById)
+    {
+        GetScoutById(shotById).ShotBullet();
     }
 
     /// Cartesian product of all peers
@@ -155,6 +167,8 @@ public partial class Client : Node2D, NetworkObject
         RemoveChild(GetChild(0));
 
         MainRef.Minimap.Initialize(MainRef);
+
+        _music.Play();
 
         _inputTimer.Start();
         _inputCollector.StartCollection();

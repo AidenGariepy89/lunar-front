@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dkpejha3aw4uf"
-path="res://.godot/imported/scout_earth.png-4ab15d25a6bb971abe9860c3854f1521.ctex"
+uid="uid://c7rqcwd7aoive"
+path="res://.godot/imported/bg.png-54f02dab9d92779bc52b7bde4ac58510.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://resources/scout_earth.png"
-dest_files=["res://.godot/imported/scout_earth.png-4ab15d25a6bb971abe9860c3854f1521.ctex"]
+source_file="res://resources/textures/bg.png"
+dest_files=["res://.godot/imported/bg.png-54f02dab9d92779bc52b7bde4ac58510.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c7rqcwd7aoive"
-path="res://.godot/imported/bg.png-7f302da4d08af182fe92a342725e65ee.ctex"
+uid="uid://ba3mx4y42tmw6"
+path="res://.godot/imported/scout_shield_mars.png-cbecb237a471d9974ac67b27be45045a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://resources/bg.png"
-dest_files=["res://.godot/imported/bg.png-7f302da4d08af182fe92a342725e65ee.ctex"]
+source_file="res://resources/textures/scout_shield_mars.png"
+dest_files=["res://.godot/imported/scout_shield_mars.png-cbecb237a471d9974ac67b27be45045a.ctex"]
 
 [params]
 

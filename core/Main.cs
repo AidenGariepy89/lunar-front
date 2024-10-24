@@ -77,7 +77,7 @@ public partial class Main : Node2D, NetworkObject
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true)]
-    public void SpawnNewBullet(Array bulletPacket)
+    public void SpawnNewBullet(long shotById, Array bulletPacket)
     {
         var data = BulletPacket.Deconstruct(bulletPacket);
 
@@ -90,5 +90,11 @@ public partial class Main : Node2D, NetworkObject
         bullet.Initialize(Map);
 
         Bullets.AddChild(bullet);
+
+        if (_networkObject is Client.Client)
+        {
+            var client = _networkObject as Client.Client;
+            client.BulletShot(shotById);
+        }
     }
 }

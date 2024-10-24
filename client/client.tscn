@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://yw0raut60wko"]
+[gd_scene load_steps=9 format=3 uid="uid://yw0raut60wko"]
 
 [ext_resource type="Script" path="res://client/Client.cs" id="1_cq6i1"]
 [ext_resource type="PackedScene" uid="uid://c5i35ke47a16c" path="res://client/scout_client.tscn" id="2_ep25r"]
-[ext_resource type="Texture2D" uid="uid://b3yit6q3ew6gn" path="res://resources/MainMenuLogo.png" id="3_jeagw"]
+[ext_resource type="Texture2D" uid="uid://b3yit6q3ew6gn" path="res://resources/textures/MainMenuLogo.png" id="3_jeagw"]
 [ext_resource type="Script" path="res://core/InputCollector.cs" id="3_yqipv"]
+[ext_resource type="AudioStream" uid="uid://doy76yby2pw8r" path="res://resources/sounds/LunarFront.mp3" id="5_1gfam"]
 
 [sub_resource type="Gradient" id="Gradient_7f3l2"]
 interpolation_mode = 2
@@ -62,3 +63,8 @@ script = ExtResource("3_yqipv")
 
 [node name="InputTimer" type="Timer" parent="."]
 wait_time = 0.05
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_1gfam")
+volume_db = -7.235
+bus = &"Music"

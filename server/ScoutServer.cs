@@ -161,7 +161,11 @@ public partial class ScoutServer : Area2D
             Rotation,
             Data.Faction
         );
-        _server.MainRef.Rpc(Core.Main.MethodName.SpawnNewBullet, packet);
+        _server.MainRef.Rpc(
+            Core.Main.MethodName.SpawnNewBullet,
+            Data.MultiplayerID,
+            packet
+        );
 
         _shootingFireLeft = !_shootingFireLeft;
         _shooting = false;

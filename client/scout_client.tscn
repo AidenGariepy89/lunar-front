@@ -1,19 +1,21 @@
-[gd_scene load_steps=9 format=3 uid="uid://c5i35ke47a16c"]
+[gd_scene load_steps=11 format=3 uid="uid://c5i35ke47a16c"]
 
 [ext_resource type="Script" path="res://client/ScoutClient.cs" id="1_1w5gs"]
-[ext_resource type="Texture2D" uid="uid://def3lhoaliy3h" path="res://resources/scout_mars.png" id="2_jdben"]
-[ext_resource type="Texture2D" uid="uid://dkpejha3aw4uf" path="res://resources/scout_earth.png" id="2_sfhb0"]
-[ext_resource type="Texture2D" uid="uid://nr8hl1csj67g" path="res://resources/scout2.png" id="3_potwb"]
-[ext_resource type="Texture2D" uid="uid://cjiq3xje3rs1d" path="res://resources/scout5.png" id="4_qvjjf"]
-[ext_resource type="Texture2D" uid="uid://xam2eapv8lmk" path="res://resources/scout4.png" id="5_1ylwc"]
-[ext_resource type="Texture2D" uid="uid://wggkc51pjpop" path="res://resources/scout3.png" id="6_yfhf4"]
+[ext_resource type="Texture2D" uid="uid://ce5rnsleyubed" path="res://resources/textures/scout_team2.png" id="2_6ykdy"]
+[ext_resource type="Texture2D" uid="uid://nr8hl1csj67g" path="res://resources/textures/scout2.png" id="3_potwb"]
+[ext_resource type="Texture2D" uid="uid://cjiq3xje3rs1d" path="res://resources/textures/scout5.png" id="4_qvjjf"]
+[ext_resource type="Texture2D" uid="uid://xam2eapv8lmk" path="res://resources/textures/scout4.png" id="5_1ylwc"]
+[ext_resource type="Texture2D" uid="uid://wggkc51pjpop" path="res://resources/textures/scout3.png" id="6_yfhf4"]
+[ext_resource type="Texture2D" uid="uid://c6a7hs1t3lowl" path="res://resources/textures/scout_team1.png" id="7_24hdr"]
+[ext_resource type="AudioStream" uid="uid://bhfigd7tic08m" path="res://resources/sounds/BlowUpSfx_edit.mp3" id="8_8exlu"]
+[ext_resource type="AudioStream" uid="uid://cqu8qy5wmoj3x" path="res://resources/sounds/laserShoot.wav" id="9_oa1x5"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5cpgv"]
 size = Vector2(16, 16)
 
 [node name="ScoutClient" type="Area2D"]
 script = ExtResource("1_1w5gs")
-SpriteTeamMars = ExtResource("2_jdben")
+SpriteTeamMars = ExtResource("2_6ykdy")
 SpriteForwardThrust = ExtResource("3_potwb")
 SpriteBackwardThrust = ExtResource("4_qvjjf")
 SpriteLeftwardThrust = ExtResource("5_1ylwc")
@@ -21,7 +23,13 @@ SpriteRightwardThrust = ExtResource("6_yfhf4")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 position = Vector2(-4, 0)
-texture = ExtResource("2_sfhb0")
+texture = ExtResource("7_24hdr")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_5cpgv")
+
+[node name="ExplosionSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("8_8exlu")
+
+[node name="ShootSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("9_oa1x5")

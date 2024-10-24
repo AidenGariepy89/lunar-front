@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://nr8hl1csj67g"
-path="res://.godot/imported/scout2.png-a3842795bffc44890a5b150a0064dc07.ctex"
+uid="uid://c6a7hs1t3lowl"
+path="res://.godot/imported/scout_team1.png-0b1d5445b4b11bdb9ce97fc670e5532f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://resources/scout2.png"
-dest_files=["res://.godot/imported/scout2.png-a3842795bffc44890a5b150a0064dc07.ctex"]
+source_file="res://resources/textures/scout_team1.png"
+dest_files=["res://.godot/imported/scout_team1.png-0b1d5445b4b11bdb9ce97fc670e5532f.ctex"]
 
 [params]
 

@@ -20,12 +20,16 @@ public partial class ScoutClient : Area2D
     public bool IsPlayerScout = false;
 
     Sprite2D _sprite;
+    AudioStreamPlayer2D _shootAudio;
+    AudioStreamPlayer2D _explosionAudio;
 
     Map _map;
 
     public void Initialize(Scout data, Map map)
     {
         _sprite = GetNode<Sprite2D>("Sprite");
+        _shootAudio = GetNode<AudioStreamPlayer2D>("ShootSound");
+        _explosionAudio = GetNode<AudioStreamPlayer2D>("ExplosionSound");
 
         _map = map;
 
@@ -93,5 +97,10 @@ public partial class ScoutClient : Area2D
         {
             DrawTexture(SpriteLeftwardThrust, offset);
         }
+    }
+
+    public void ShotBullet()
+    {
+        _shootAudio.Play();
     }
 }
