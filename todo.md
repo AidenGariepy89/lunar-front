@@ -14,3 +14,4 @@
 8. [ ] - planets
 9. [ ] - hud
 10. [ ] - options menu
+11. [ ] - boost
