@@ -376,7 +376,6 @@ public partial class Client : Node2D
         }
 
         MainRef.Minimap.Deinitialize();
-        MainRef.Minimap.Visible = false;
 
         SetupTitleScreen();
 

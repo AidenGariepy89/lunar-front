@@ -100,6 +100,8 @@ public partial class Minimap : Node2D
 
     public void Initialize(Main mainRef)
     {
+        Visible = true;
+
         _mainRef = mainRef;
 
         _refresh.Start();
@@ -111,6 +113,8 @@ public partial class Minimap : Node2D
 
     public void Deinitialize()
     {
+        Visible = false;
+
         _refresh.Stop();
         _blink.Stop();
         _activated = false;
