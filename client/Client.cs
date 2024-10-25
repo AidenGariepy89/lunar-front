@@ -53,8 +53,6 @@ public partial class Client : Node2D
         _music = GetNode<AudioStreamPlayer>("Music");
 
         SetupTitleScreen();
-
-        GetNode<CanvasLayer>("CanvasLayer").AddChild(_title);
     }
 
     void EstablishConnection()
@@ -224,7 +222,32 @@ public partial class Client : Node2D
     {
         _log.Line($"Disconnected with {id}");
 
-        GetScoutById(id).QueueFree();
+        if (id != Constants.ServerId)
+        {
+            return;
+        }
+
+        Multiplayer.MultiplayerPeer.Close();
+
+        foreach (var scout in MainRef.Scouts.GetChildren()) {
+            scout.QueueFree();
+        }
+        foreach (var bullet in MainRef.Bullets.GetChildren()) {
+            bullet.QueueFree();
+        }
+
+        Hud.QueueFree();
+        _music.Stop();
+        MainRef.Map.Visible = false;
+        Earth.Visible = false;
+        Mars.Visible = false;
+        _inputTimer.Stop();
+        _inputCollector.FinishCollection();
+        _connected = false;
+        MainRef.Cam.Target = null;
+
+        SetupTitleScreen();
+        MainRef.Minimap.Visible = false;
     }
 
     void ConnectedToServer()
@@ -296,5 +319,6 @@ public partial class Client : Node2D
         _title = TitleScene.Instantiate<TitleScreen>();
         _title.Initialize();
         _title.JoinButton.Pressed += EstablishConnection;
+        GetNode<CanvasLayer>("CanvasLayer").AddChild(_title);
     }
 }

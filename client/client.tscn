@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://c5i35ke47a16c" path="res://client/scout_client.tscn" id="2_ep25r"]
 [ext_resource type="PackedScene" uid="uid://lydi5b2emhn7" path="res://client/ui/title_screen.tscn" id="3_3jtjh"]
 [ext_resource type="Script" path="res://core/InputCollector.cs" id="3_yqipv"]
-[ext_resource type="PackedScene" uid="uid://61bjedvfo2s0" path="res://client/PlanetClient.tscn" id="4_ai0x6"]
+[ext_resource type="PackedScene" path="res://client/PlanetClient.tscn" id="4_ai0x6"]
 [ext_resource type="PackedScene" uid="uid://b1jm3gas7gbud" path="res://client/ui/hud.tscn" id="4_gdo7f"]
 [ext_resource type="AudioStream" uid="uid://doy76yby2pw8r" path="res://resources/sounds/LunarFront.mp3" id="5_1gfam"]
 
