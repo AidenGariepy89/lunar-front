@@ -108,4 +108,11 @@ public partial class Minimap : Node2D
 
         QueueRedraw();
     }
+
+    public void Deinitialize()
+    {
+        _refresh.Stop();
+        _blink.Stop();
+        _activated = false;
+    }
 }

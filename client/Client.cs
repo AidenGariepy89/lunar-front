@@ -93,6 +93,11 @@ public partial class Client : Node2D
         }
 
         ShowDebug = Input.IsActionPressed("debug");
+
+        if (Input.IsActionJustPressed("disconnect"))
+        {
+            Disconnect();
+        }
     }
 
     public void DeliverInput(Array input) { }
@@ -232,29 +237,7 @@ public partial class Client : Node2D
             return;
         }
 
-        Multiplayer.MultiplayerPeer.Close();
-
-        foreach (var scout in MainRef.Scouts.GetChildren())
-        {
-            scout.QueueFree();
-        }
-        foreach (var bullet in MainRef.Bullets.GetChildren())
-        {
-            bullet.QueueFree();
-        }
-
-        Hud.QueueFree();
-        _music.Stop();
-        MainRef.Map.Visible = false;
-        Earth.Visible = false;
-        Mars.Visible = false;
-        _inputTimer.Stop();
-        _inputCollector.FinishCollection();
-        _connected = false;
-        MainRef.Cam.Target = null;
-
-        SetupTitleScreen();
-        MainRef.Minimap.Visible = false;
+        Disconnect();
     }
 
     void ConnectedToServer()
@@ -265,6 +248,7 @@ public partial class Client : Node2D
     void ConnectionFailed()
     {
         _log.Line("Connection failed!");
+        _title.ErrMsg.Visible = true;
     }
 
     void InputTimeout()
@@ -366,5 +350,41 @@ public partial class Client : Node2D
         {
             kills[i].Item2.Rank = i + 1;
         }
+    }
+
+    void Disconnect()
+    {
+        _connected = false;
+
+        Multiplayer.MultiplayerPeer.Close();
+
+        MainRef.Map.Visible = false;
+
+        Earth.Visible = false;
+        Mars.Visible = false;
+
+        MainRef.Cam.Target = null;
+
+        foreach (var scout in MainRef.Scouts.GetChildren())
+        {
+            scout.QueueFree();
+        }
+
+        foreach (var bullet in MainRef.Bullets.GetChildren())
+        {
+            bullet.QueueFree();
+        }
+
+        MainRef.Minimap.Deinitialize();
+        MainRef.Minimap.Visible = false;
+
+        SetupTitleScreen();
+
+        Hud.QueueFree();
+
+        _music.Stop();
+
+        _inputTimer.Stop();
+        _inputCollector.FinishCollection();
     }
 }
