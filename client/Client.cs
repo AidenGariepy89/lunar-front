@@ -52,9 +52,8 @@ public partial class Client : Node2D
 
         _music = GetNode<AudioStreamPlayer>("Music");
 
-        _title = TitleScene.Instantiate<TitleScreen>();
-        _title.Initialize();
-        _title.JoinButton.Pressed += EstablishConnection;
+        SetupTitleScreen();
+
         GetNode<CanvasLayer>("CanvasLayer").AddChild(_title);
     }
 
@@ -91,7 +90,7 @@ public partial class Client : Node2D
         if (Input.IsActionJustPressed("debug"))
         {
             _audioMuted = !_audioMuted;
-            AudioServer.SetBusMute(AudioServer.GetBusIndex("Music"), _audioMuted);
+            AudioServer.SetBusMute(AudioServer.GetBusIndex("Master"), _audioMuted);
         }
     }
 
@@ -264,6 +263,10 @@ public partial class Client : Node2D
         {
             scoutObject.PlayExplosion();
         }
+        else
+        {
+            scoutObject.PlayHit();
+        }
 
         var bullet = MainRef.GetBulletById(bulletId);
         if (bullet != null)
@@ -286,5 +289,12 @@ public partial class Client : Node2D
         }
 
         return null;
+    }
+
+    void SetupTitleScreen()
+    {
+        _title = TitleScene.Instantiate<TitleScreen>();
+        _title.Initialize();
+        _title.JoinButton.Pressed += EstablishConnection;
     }
 }

@@ -24,6 +24,7 @@ public partial class ScoutClient : Area2D
     Sprite2D _sprite;
     AudioStreamPlayer2D _shootAudio;
     AudioStreamPlayer2D _explosionAudio;
+    AudioStreamPlayer2D _hitAudio;
 
     Map _map;
 
@@ -32,6 +33,7 @@ public partial class ScoutClient : Area2D
         _sprite = GetNode<Sprite2D>("Sprite");
         _shootAudio = GetNode<AudioStreamPlayer2D>("ShootSound");
         _explosionAudio = GetNode<AudioStreamPlayer2D>("ExplosionSound");
+        _hitAudio = GetNode<AudioStreamPlayer2D>("HitSound");
 
         _map = map;
 
@@ -108,6 +110,11 @@ public partial class ScoutClient : Area2D
         _shootAudio.Play();
     }
 
+    public void PlayHit()
+    {
+        _hitAudio.Play();
+    }
+
     public void PlayExplosion()
     {
         // Here, we play the explosion animation
@@ -116,5 +123,7 @@ public partial class ScoutClient : Area2D
         explosion.Position = Position;
         explosion.Visible = true;
         GetTree().Root.GetChild(0).AddChild(explosion);
+
+        _explosionAudio.Play();
     }
 }

@@ -46,7 +46,7 @@ public partial class PlanetClient : Node2D
         }
 
         Data = data;
-        QueueRedraw();
+        // QueueRedraw();
     }
 
     public void HitAnimation()
@@ -59,8 +59,8 @@ public partial class PlanetClient : Node2D
         _animator.Play("hit_flash");
     }
 
-    public override void _Draw()
-    {
-        DrawString(ThemeDB.FallbackFont, new Vector2(0, -70), $"{(int)Data.ShieldHealth} / {Planet.ShieldMaxHealth}", fontSize: 36, modulate: Colors.White);
-    }
+    // public override void _Draw()
+    // {
+    //     DrawString(ThemeDB.FallbackFont, new Vector2(0, -70), $"{(int)Data.ShieldHealth} / {Planet.ShieldMaxHealth}", fontSize: 36, modulate: Colors.White);
+    // }
 }
