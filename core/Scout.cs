@@ -62,6 +62,8 @@ public class Scout
     public Vector2 Velocity;
     public float Rotation;
 
+    public int KillCount = 0;
+
     public Scout()
     {
         Position = Vector2.Zero;
@@ -90,6 +92,7 @@ public class Scout
         copy.Leftward = Leftward;
         copy.Shooting = Shooting;
         copy.Mouse = Mouse;
+        copy.KillCount = KillCount;
 
         return copy;
     }
@@ -106,6 +109,7 @@ public class Scout
         arr.Add(Position);
         arr.Add(Velocity);
         arr.Add(Rotation);
+        arr.Add(KillCount);
 
         // Visual
         arr.Add(ThrustForward);
@@ -126,7 +130,7 @@ public class Scout
 
     public static Scout Deserialize(Array arr)
     {
-        if (arr.Count != 17)
+        if (arr.Count != 18)
         {
             throw new System.Exception("ARRAY BAD!!!!");
         }
@@ -141,20 +145,21 @@ public class Scout
         scout.Position = (Vector2)arr[4];
         scout.Velocity = (Vector2)arr[5];
         scout.Rotation = (float)arr[6];
+        scout.KillCount = (int)arr[7];
 
         // Visual
-        scout.ThrustForward = (bool)arr[7];
-        scout.ThrustBackward = (bool)arr[8];
-        scout.ThrustRight = (bool)arr[9];
-        scout.ThrustLeft = (bool)arr[10];
+        scout.ThrustForward = (bool)arr[8];
+        scout.ThrustBackward = (bool)arr[9];
+        scout.ThrustRight = (bool)arr[10];
+        scout.ThrustLeft = (bool)arr[11];
 
         // Input
-        scout.Forward = (bool)arr[11];
-        scout.Backward = (bool)arr[12];
-        scout.Rightward = (bool)arr[13];
-        scout.Leftward = (bool)arr[14];
-        scout.Shooting = (bool)arr[15];
-        scout.Mouse = (Vector2)arr[16];
+        scout.Forward = (bool)arr[12];
+        scout.Backward = (bool)arr[13];
+        scout.Rightward = (bool)arr[14];
+        scout.Leftward = (bool)arr[15];
+        scout.Shooting = (bool)arr[16];
+        scout.Mouse = (Vector2)arr[17];
 
         return scout;
     }

@@ -53,6 +53,7 @@ public struct InputPacket
 public struct BulletSpawnPacket
 {
     public long BulletId;
+    public long ShotById;
     public Vector2 Position;
     public Vector2 Velocity;
     public float Rotation;
@@ -63,19 +64,28 @@ public struct BulletSpawnPacket
         var packet = new BulletSpawnPacket();
 
         packet.BulletId = (long)data[0];
-        packet.Position = (Vector2)data[1];
-        packet.Velocity = (Vector2)data[2];
-        packet.Rotation = (float)data[3];
-        packet.Faction = (Faction)(int)data[4];
+        packet.ShotById = (long)data[1];
+        packet.Position = (Vector2)data[2];
+        packet.Velocity = (Vector2)data[3];
+        packet.Rotation = (float)data[4];
+        packet.Faction = (Faction)(int)data[5];
 
         return packet;
     }
 
-    public static Array Construct(long bulletId, Vector2 position, Vector2 velocity, float rotation, Faction faction)
+    public static Array Construct(
+        long bulletId,
+        long shotById,
+        Vector2 position,
+        Vector2 velocity,
+        float rotation,
+        Faction faction
+    )
     {
         var arr = new Array();
 
         arr.Add(bulletId);
+        arr.Add(shotById);
         arr.Add(position);
         arr.Add(velocity);
         arr.Add(rotation);

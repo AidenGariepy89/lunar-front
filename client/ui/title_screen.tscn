@@ -31,6 +31,7 @@ grow_vertical = 2
 script = ExtResource("1_bdslx")
 
 [node name="JoinButton" type="Button" parent="."]
+layout_mode = 0
 offset_left = 501.0
 offset_top = 240.0
 offset_right = 637.0
@@ -40,6 +41,7 @@ icon = SubResource("GradientTexture2D_jo06b")
 icon_alignment = 1
 
 [node name="RichTextLabel" type="TextureRect" parent="."]
+layout_mode = 0
 offset_left = 335.0
 offset_top = 55.0
 offset_right = 815.0
@@ -48,6 +50,7 @@ texture = ExtResource("1_w3itu")
 expand_mode = 2
 
 [node name="Label" type="Label" parent="."]
+layout_mode = 0
 offset_left = 400.0
 offset_top = 404.0
 offset_right = 751.0

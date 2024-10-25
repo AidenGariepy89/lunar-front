@@ -17,6 +17,7 @@ public partial class Client : Node2D
     public PlanetClient Earth;
     public PlanetClient Mars;
     public Hud Hud = null;
+    public bool ShowDebug = false;
 
     bool _connected = false;
     Logger _log;
@@ -85,11 +86,13 @@ public partial class Client : Node2D
 
         _inputCollector.Update(dt);
 
-        if (Input.IsActionJustPressed("debug"))
+        if (Input.IsActionJustPressed("mute_audio"))
         {
             _audioMuted = !_audioMuted;
             AudioServer.SetBusMute(AudioServer.GetBusIndex("Master"), _audioMuted);
         }
+
+        ShowDebug = Input.IsActionPressed("debug");
     }
 
     public void DeliverInput(Array input) { }
@@ -106,7 +109,7 @@ public partial class Client : Node2D
 
         var scoutScene = ScoutScene.Instantiate<ScoutClient>();
         scoutScene.Name = scout.MultiplayerID.ToString();
-        scoutScene.Initialize(scout, MainRef.Map);
+        scoutScene.Initialize(scout, this);
 
         MainRef.Scouts.AddChild(scoutScene);
 
@@ -136,7 +139,7 @@ public partial class Client : Node2D
 
             var scoutScene = ScoutScene.Instantiate<ScoutClient>();
             scoutScene.Name = scoutData.MultiplayerID.ToString();
-            scoutScene.Initialize(scoutData, MainRef.Map);
+            scoutScene.Initialize(scoutData, this);
 
             if (scoutData.MultiplayerID == Multiplayer.GetUniqueId())
             {
@@ -231,10 +234,12 @@ public partial class Client : Node2D
 
         Multiplayer.MultiplayerPeer.Close();
 
-        foreach (var scout in MainRef.Scouts.GetChildren()) {
+        foreach (var scout in MainRef.Scouts.GetChildren())
+        {
             scout.QueueFree();
         }
-        foreach (var bullet in MainRef.Bullets.GetChildren()) {
+        foreach (var bullet in MainRef.Bullets.GetChildren())
+        {
             bullet.QueueFree();
         }
 
@@ -282,18 +287,20 @@ public partial class Client : Node2D
         // We also want to delete the bullet
         var scout = Scout.Deserialize(scoutPacket);
         var scoutObject = GetScoutById(scout.MultiplayerID);
+        var bullet = MainRef.GetBulletById(bulletId);
 
         if (scoutObject.Data.CurrentState != scout.CurrentState
             && scout.CurrentState == Scout.State.Dead)
         {
             scoutObject.PlayExplosion();
+            GetScoutById(bullet.ShotById).Data.KillCount += 1;
+            CalculateRanks();
         }
         else
         {
             scoutObject.PlayHit();
         }
 
-        var bullet = MainRef.GetBulletById(bulletId);
         if (bullet != null)
         {
             bullet.QueueFree();
@@ -333,5 +340,31 @@ public partial class Client : Node2D
         _title.Initialize();
         _title.JoinButton.Pressed += EstablishConnection;
         GetNode<CanvasLayer>("CanvasLayer").AddChild(_title);
+    }
+
+    void CalculateRanks()
+    {
+        var kills = new System.Collections.Generic.List<(int, ScoutClient)>();
+
+        foreach (var child in MainRef.Scouts.GetChildren())
+        {
+            var scout = child as ScoutClient;
+            if (scout == null)
+            {
+                continue;
+            }
+
+            kills.Add((scout.Data.KillCount, scout));
+        }
+
+        kills.Sort(delegate ((int, ScoutClient) x, (int, ScoutClient) y)
+        {
+            return y.Item1.CompareTo(x.Item1);
+        });
+
+        for (int i = 0; i < kills.Count; i++)
+        {
+            kills[i].Item2.Rank = i + 1;
+        }
     }
 }

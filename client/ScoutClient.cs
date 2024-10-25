@@ -22,22 +22,26 @@ public partial class ScoutClient : Area2D
 
     public Scout Data;
     public bool IsPlayerScout = false;
+    public int Rank = 1;
 
     Sprite2D _sprite;
     AudioStreamPlayer2D _shootAudio;
     AudioStreamPlayer2D _explosionAudio;
     AudioStreamPlayer2D _hitAudio;
+    Rank _debug;
 
-    Map _map;
+    Client _client;
 
-    public void Initialize(Scout data, Map map)
+    public void Initialize(Scout data, Client client)
     {
         _sprite = GetNode<Sprite2D>("Sprite");
         _shootAudio = GetNode<AudioStreamPlayer2D>("ShootSound");
         _explosionAudio = GetNode<AudioStreamPlayer2D>("ExplosionSound");
         _hitAudio = GetNode<AudioStreamPlayer2D>("HitSound");
+        _debug = GetNode<Rank>("Debug");
+        _debug.Initialize(client, this);
 
-        _map = map;
+        _client = client;
 
         Data = data;
 
@@ -73,7 +77,7 @@ public partial class ScoutClient : Area2D
             Data.Mouse = GetGlobalMousePosition();
         }
 
-        Data.Process(dt, _map);
+        Data.Process(dt, _client.MainRef.Map);
 
         Position = Data.Position;
         Rotation = Data.Rotation;
@@ -105,6 +109,7 @@ public partial class ScoutClient : Area2D
         {
             DrawTexture(SpriteLeftwardThrust, offset);
         }
+
     }
 
     public void ShotBullet()

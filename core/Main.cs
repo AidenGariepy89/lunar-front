@@ -109,13 +109,13 @@ public partial class Main : Node2D
     }
 
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true)]
-    public void SpawnNewBullet(long shotById, Array bulletSpawnPacket)
+    public void SpawnNewBullet(Array bulletSpawnPacket)
     {
-        CreateBullet(bulletSpawnPacket);
+        var bullet = CreateBullet(bulletSpawnPacket);
 
         if (_client != null)
         {
-            _client.BulletShot(shotById);
+            _client.BulletShot(bullet.ShotById);
         }
     }
 
@@ -189,12 +189,13 @@ public partial class Main : Node2D
         return null;
     }
 
-    public void CreateBullet(Array bulletSpawnPacket)
+    public ScoutBullet CreateBullet(Array bulletSpawnPacket)
     {
         var data = BulletSpawnPacket.Deconstruct(bulletSpawnPacket);
 
         var bullet = BulletScene.Instantiate<ScoutBullet>();
         bullet.BulletId = data.BulletId;
+        bullet.ShotById = data.ShotById;
         bullet.Position = data.Position;
         bullet.Velocity = data.Velocity;
         bullet.Rotation = data.Rotation;
@@ -202,5 +203,7 @@ public partial class Main : Node2D
         bullet.Initialize(Map);
 
         Bullets.AddChild(bullet);
+
+        return bullet;
     }
 }

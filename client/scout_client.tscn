@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://c5i35ke47a16c"]
+[gd_scene load_steps=15 format=3 uid="uid://c5i35ke47a16c"]
 
 [ext_resource type="Script" path="res://client/ScoutClient.cs" id="1_1w5gs"]
 [ext_resource type="Texture2D" uid="uid://ce5rnsleyubed" path="res://resources/textures/scout_team2.png" id="2_6ykdy"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://cpwmnmsv12yni" path="res://client/particles/scout_hit.tscn" id="8_lpjdp"]
 [ext_resource type="AudioStream" uid="uid://cqu8qy5wmoj3x" path="res://resources/sounds/laserShoot.wav" id="9_oa1x5"]
 [ext_resource type="AudioStream" uid="uid://dvlewy6jp70d6" path="res://resources/sounds/hitHurt.wav" id="11_ouy40"]
+[ext_resource type="Script" path="res://client/ui/Rank.cs" id="13_0y0tu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5cpgv"]
 size = Vector2(16, 16)
@@ -43,3 +44,7 @@ volume_db = -6.036
 
 [node name="HitSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("11_ouy40")
+
+[node name="Debug" type="Node2D" parent="."]
+top_level = true
+script = ExtResource("13_0y0tu")

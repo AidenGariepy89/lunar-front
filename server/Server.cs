@@ -90,6 +90,7 @@ public partial class Server : Node2D
 
             existingBullets.Add(BulletSpawnPacket.Construct(
                 bullet.BulletId,
+                bullet.ShotById,
                 bullet.Position,
                 bullet.Velocity,
                 bullet.Rotation,
@@ -223,7 +224,7 @@ public partial class Server : Node2D
         _currentSeqNum = (_currentSeqNum + 1) % long.MaxValue;
     }
 
-    ScoutServer GetScoutById(long id)
+    public ScoutServer GetScoutById(long id)
     {
         string idStr = id.ToString();
         foreach (var child in MainRef.Scouts.GetChildren())

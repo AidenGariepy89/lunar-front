@@ -157,6 +157,7 @@ public partial class ScoutServer : Area2D
 
         var packet = BulletSpawnPacket.Construct(
             _server.NextBulletId,
+            Data.MultiplayerID,
             spawnPos,
             (Vector2.Right * Scout.ShootBulletSpeed).Rotated(Data.Rotation) + Data.Velocity,
             Rotation,
@@ -165,11 +166,7 @@ public partial class ScoutServer : Area2D
 
         _server.NextBulletId = (_server.NextBulletId + 1) % long.MaxValue;
 
-        _server.MainRef.Rpc(
-            Core.Main.MethodName.SpawnNewBullet,
-            Data.MultiplayerID,
-            packet
-        );
+        _server.MainRef.Rpc(Core.Main.MethodName.SpawnNewBullet, packet);
 
         _shootingFireLeft = !_shootingFireLeft;
         _shooting = false;
@@ -198,6 +195,8 @@ public partial class ScoutServer : Area2D
 
         if (Data.Health <= 0)
         {
+            _server.GetScoutById(bullet.ShotById).Data.KillCount += 1;
+
             Die();
         }
 
