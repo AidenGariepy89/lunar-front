@@ -1,10 +1,12 @@
-[gd_scene load_steps=12 format=3 uid="uid://61bjedvfo2s0"]
+[gd_scene load_steps=14 format=3 uid="uid://61bjedvfo2s0"]
 
 [ext_resource type="Script" path="res://client/PlanetClient.cs" id="1_2yun0"]
 [ext_resource type="PackedScene" uid="uid://c114fa2i2nklo" path="res://client/particles/planet_hit.tscn" id="2_0uva1"]
 [ext_resource type="Texture2D" uid="uid://bqey3mli8u7ur" path="res://resources/textures/earth.png" id="2_1jttd"]
 [ext_resource type="Texture2D" uid="uid://e8xfvg31skd7" path="res://resources/textures/mars.png" id="2_qxtr5"]
 [ext_resource type="Shader" path="res://client/Shield.gdshader" id="3_2ugk0"]
+[ext_resource type="AudioStream" uid="uid://c75xjxf5pydls" path="res://resources/sounds/ScoreChangeSfx_edit.wav" id="6_gqf6g"]
+[ext_resource type="AudioStream" uid="uid://dvlewy6jp70d6" path="res://resources/sounds/hitHurt.wav" id="7_mp5k6"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qpucl"]
 shader = ExtResource("3_2ugk0")
@@ -80,3 +82,11 @@ texture = ExtResource("2_1jttd")
 libraries = {
 "": SubResource("AnimationLibrary_k4uw2")
 }
+
+[node name="ShieldSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("6_gqf6g")
+bus = &"FX"
+
+[node name="HitSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("7_mp5k6")
+bus = &"FX"

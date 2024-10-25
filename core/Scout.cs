@@ -33,6 +33,7 @@ public class Scout
     public const double RespawnDelay = 5.0;
 
     public const int KamikazeDamage = 2;
+    public const int DeathPoints = 10;
 
     // Input Variables
 

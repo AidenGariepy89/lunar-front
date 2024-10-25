@@ -113,8 +113,6 @@ public partial class PlanetServer : Area2D
             }
         }
 
-        scout.Data.Health = 0;
-        scout.Data.CurrentState = Scout.State.Dead;
         scout.Die();
 
         _server.MainRef.Rpc(

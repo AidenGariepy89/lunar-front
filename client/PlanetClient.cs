@@ -19,6 +19,8 @@ public partial class PlanetClient : Node2D
 
     Sprite2D _sprite;
     AnimationPlayer _animator;
+    AudioStreamPlayer2D _hitAudio;
+    AudioStreamPlayer2D _shieldAudio;
 
     public void Initialize(Planet data)
     {
@@ -26,6 +28,9 @@ public partial class PlanetClient : Node2D
 
         _sprite = GetNode<Sprite2D>("Sprite");
         _animator = GetNode<AnimationPlayer>("Animator");
+
+        _hitAudio = GetNode<AudioStreamPlayer2D>("HitSound");
+        _shieldAudio = GetNode<AudioStreamPlayer2D>("ShieldSound");
 
         if (Data.Faction == Faction.Earth)
         {
@@ -44,8 +49,8 @@ public partial class PlanetClient : Node2D
     {
         if (data.ShieldUp != Data.ShieldUp)
         {
-            GD.Print("hello");
             (_sprite.Material as ShaderMaterial).SetShaderParameter("enabled", data.ShieldUp);
+            _shieldAudio.Play();
         }
 
         Data = data;
@@ -54,6 +59,8 @@ public partial class PlanetClient : Node2D
 
     public void HitAnimation(float direction, Vector2 position)
     {
+        _hitAudio.Play();
+
         if (Data.ShieldUp)
         {
             if (_animator.IsPlaying())

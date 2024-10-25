@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://vcrbjral67vb"]
-
-[ext_resource type="Material" uid="uid://b56ehpw1ujkl3" path="res://resources/scout_boost.tres" id="1_ug4yy"]
-
-[node name="ScoutBoost" type="GPUParticles2D"]
-amount = 64
-process_material = ExtResource("1_ug4yy")
-lifetime = 0.5

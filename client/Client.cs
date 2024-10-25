@@ -224,6 +224,8 @@ public partial class Client : Node2D
 
         if (id != Constants.ServerId)
         {
+            GetScoutById(id).QueueFree();
+
             return;
         }
 

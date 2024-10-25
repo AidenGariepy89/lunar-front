@@ -198,10 +198,7 @@ public partial class ScoutServer : Area2D
 
         if (Data.Health <= 0)
         {
-            Data.Health = 0;
-            Data.CurrentState = Scout.State.Dead;
-
-            Die(); // we don't want this to be awaited
+            Die();
         }
 
         _server.MainRef.Rpc(Core.Main.MethodName.HitScout, Data.Serialize(), bullet.BulletId);
@@ -209,7 +206,24 @@ public partial class ScoutServer : Area2D
         bullet.QueueFree();
     }
 
-    public async Task Die()
+    public void Die()
+    {
+        Data.Health = 0;
+        Data.CurrentState = Scout.State.Dead;
+
+        if (Data.Faction == Faction.Earth)
+        {
+            _server.Mars.Data.Score += Scout.DeathPoints;
+        }
+        else
+        {
+            _server.Earth.Data.Score += Scout.DeathPoints;
+        }
+
+        AwaitRespawn(); // we don't want this to be awaited
+    }
+
+    public async Task AwaitRespawn()
     {
         await ToSignal(GetTree().CreateTimer(Constants.RespawnDelay), SceneTreeTimer.SignalName.Timeout);
 
