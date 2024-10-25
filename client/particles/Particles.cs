@@ -1,6 +1,6 @@
 using Godot;
 
-public partial class ScoutExplosion : GpuParticles2D
+public partial class Particles : GpuParticles2D
 {
     public override void _Ready()
     {

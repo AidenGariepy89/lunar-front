@@ -6,6 +6,9 @@ namespace Client;
 public partial class PlanetClient : Node2D
 {
     [Export]
+    public PackedScene HitParticles;
+
+    [Export]
     public Texture2D SpriteMars;
     [Export]
     public ShaderMaterial EarthShield;
@@ -49,14 +52,24 @@ public partial class PlanetClient : Node2D
         // QueueRedraw();
     }
 
-    public void HitAnimation()
+    public void HitAnimation(float direction, Vector2 position)
     {
-        if (_animator.IsPlaying())
+        if (Data.ShieldUp)
         {
-            _animator.Stop();
+            if (_animator.IsPlaying())
+            {
+                _animator.Stop();
+            }
+
+            _animator.Play("hit_flash");
+
+            return;
         }
 
-        _animator.Play("hit_flash");
+        var particles = HitParticles.Instantiate<Particles>();
+        particles.Position = position;
+        particles.Rotation = direction;
+        GetTree().Root.GetChild(0).AddChild(particles);
     }
 
     // public override void _Draw()

@@ -32,6 +32,8 @@ public class Scout
     public const int MaxHealth = 5;
     public const double RespawnDelay = 5.0;
 
+    public const int KamikazeDamage = 2;
+
     // Input Variables
 
     public bool Forward = false;

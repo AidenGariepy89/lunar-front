@@ -300,6 +300,17 @@ public partial class Client : Node2D
         scoutObject.Sync(scout);
     }
 
+    public void PlayerHitPlanet(Array scoutData, PlanetClient planet)
+    {
+        var scout = Scout.Deserialize(scoutData);
+        var scoutClient = GetScoutById(scout.MultiplayerID);
+
+        scoutClient.Sync(scout);
+        scoutClient.PlayExplosion();
+
+        planet.HitAnimation(scoutClient.Rotation, scoutClient.Position);
+    }
+
     ScoutClient GetScoutById(long id)
     {
         string idStr = id.ToString();

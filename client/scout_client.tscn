@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://c5i35ke47a16c"]
+[gd_scene load_steps=14 format=3 uid="uid://c5i35ke47a16c"]
 
 [ext_resource type="Script" path="res://client/ScoutClient.cs" id="1_1w5gs"]
 [ext_resource type="Texture2D" uid="uid://ce5rnsleyubed" path="res://resources/textures/scout_team2.png" id="2_6ykdy"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://c6a7hs1t3lowl" path="res://resources/textures/scout_team1.png" id="7_24hdr"]
 [ext_resource type="PackedScene" uid="uid://b0c7qxbugkp2c" path="res://client/particles/scout_explosion.tscn" id="7_b8iqp"]
 [ext_resource type="AudioStream" uid="uid://bhfigd7tic08m" path="res://resources/sounds/BlowUpSfx_edit.mp3" id="8_8exlu"]
+[ext_resource type="PackedScene" uid="uid://cpwmnmsv12yni" path="res://client/particles/scout_hit.tscn" id="8_lpjdp"]
 [ext_resource type="AudioStream" uid="uid://cqu8qy5wmoj3x" path="res://resources/sounds/laserShoot.wav" id="9_oa1x5"]
 [ext_resource type="AudioStream" uid="uid://dvlewy6jp70d6" path="res://resources/sounds/hitHurt.wav" id="11_ouy40"]
 
@@ -23,6 +24,7 @@ SpriteBackwardThrust = ExtResource("4_qvjjf")
 SpriteLeftwardThrust = ExtResource("5_1ylwc")
 SpriteRightwardThrust = ExtResource("6_yfhf4")
 ExplosionScene = ExtResource("7_b8iqp")
+HitScene = ExtResource("8_lpjdp")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 position = Vector2(-4, 0)

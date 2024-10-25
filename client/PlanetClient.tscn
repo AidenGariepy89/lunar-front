@@ -1,6 +1,7 @@
-[gd_scene load_steps=11 format=3 uid="uid://61bjedvfo2s0"]
+[gd_scene load_steps=12 format=3 uid="uid://61bjedvfo2s0"]
 
 [ext_resource type="Script" path="res://client/PlanetClient.cs" id="1_2yun0"]
+[ext_resource type="PackedScene" uid="uid://c114fa2i2nklo" path="res://client/particles/planet_hit.tscn" id="2_0uva1"]
 [ext_resource type="Texture2D" uid="uid://bqey3mli8u7ur" path="res://resources/textures/earth.png" id="2_1jttd"]
 [ext_resource type="Texture2D" uid="uid://e8xfvg31skd7" path="res://resources/textures/mars.png" id="2_qxtr5"]
 [ext_resource type="Shader" path="res://client/Shield.gdshader" id="3_2ugk0"]
@@ -66,6 +67,7 @@ _data = {
 [node name="PlanetClient" type="Node2D"]
 scale = Vector2(4, 4)
 script = ExtResource("1_2yun0")
+HitParticles = ExtResource("2_0uva1")
 SpriteMars = ExtResource("2_qxtr5")
 EarthShield = SubResource("ShaderMaterial_qpucl")
 MarsShield = SubResource("ShaderMaterial_5iu1c")

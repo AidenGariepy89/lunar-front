@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://b0c7qxbugkp2c"]
 
-[ext_resource type="Script" path="res://client/particles/ScoutExplosion.cs" id="1_gseo7"]
+[ext_resource type="Script" path="res://client/particles/Particles.cs" id="1_4lxoq"]
 
 [sub_resource type="Gradient" id="Gradient_7oaic"]
 colors = PackedColorArray(1, 1, 1, 1, 0.86, 0.86, 0.86, 1)
@@ -45,4 +45,4 @@ process_material = SubResource("ParticleProcessMaterial_fwax5")
 lifetime = 2.0
 one_shot = true
 explosiveness = 0.88
-script = ExtResource("1_gseo7")
+script = ExtResource("1_4lxoq")

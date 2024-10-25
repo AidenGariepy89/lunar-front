@@ -138,10 +138,30 @@ public partial class Main : Node2D
             return;
         }
 
+        _client.Earth.Data.Score = earthScore;
+        _client.Mars.Data.Score = marsScore;
+        _client.Hud.Update(_client.Earth.Data.Score, _client.Mars.Data.Score);
+
+        var data = Planet.Deserialize(planetData);
+        var planet = (data.Faction == Faction.Earth) ? _client.Earth : _client.Mars;
+        planet.Sync(data);
+
         var bullet = GetBulletById(bulletId);
+
+        planet.HitAnimation(bullet.Rotation, bullet.Position);
+
         if (bullet != null)
         {
             bullet.QueueFree();
+        }
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority)]
+    public void PlanetScoutHit(int earthScore, int marsScore, Array scoutData, Array planetData)
+    {
+        if (_client == null)
+        {
+            return;
         }
 
         _client.Earth.Data.Score = earthScore;
@@ -151,7 +171,8 @@ public partial class Main : Node2D
         var data = Planet.Deserialize(planetData);
         var planet = (data.Faction == Faction.Earth) ? _client.Earth : _client.Mars;
         planet.Sync(data);
-        planet.HitAnimation();
+
+        _client.PlayerHitPlanet(scoutData, planet);
     }
 
     public ScoutBullet GetBulletById(long bulletId)

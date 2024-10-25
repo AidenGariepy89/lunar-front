@@ -17,6 +17,8 @@ public partial class ScoutClient : Area2D
     public Texture2D SpriteRightwardThrust;
     [Export]
     public PackedScene ExplosionScene;
+    [Export]
+    public PackedScene HitScene;
 
     public Scout Data;
     public bool IsPlayerScout = false;
@@ -112,6 +114,10 @@ public partial class ScoutClient : Area2D
 
     public void PlayHit()
     {
+        var hit = HitScene.Instantiate<Particles>();
+        hit.Position = Position;
+        GetTree().Root.GetChild(0).AddChild(hit);
+
         _hitAudio.Play();
     }
 
@@ -119,7 +125,7 @@ public partial class ScoutClient : Area2D
     {
         // Here, we play the explosion animation
         // Instance the explosion scene
-        var explosion = ExplosionScene.Instantiate<ScoutExplosion>();
+        var explosion = ExplosionScene.Instantiate<Particles>();
         explosion.Position = Position;
         explosion.Visible = true;
         GetTree().Root.GetChild(0).AddChild(explosion);

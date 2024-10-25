@@ -60,25 +60,30 @@ public partial class PlanetServer : Area2D
         if (other is ScoutBullet)
         {
             BulletHit(other as ScoutBullet);
+            return;
         }
 
         if (other is ScoutServer)
         {
             ScoutHit(other as ScoutServer);
+            return;
         }
     }
 
     void BulletHit(ScoutBullet bullet)
     {
-        int score = Data.Damage(ScoutBullet.Damage);
+        if (bullet.Faction != Data.Faction)
+        {
+            int score = Data.Damage(ScoutBullet.Damage);
 
-        if (Data.Faction == Faction.Earth)
-        {
-            _server.Mars.Data.Score += score;
-        }
-        else
-        {
-            _server.Earth.Data.Score += score;
+            if (Data.Faction == Faction.Earth)
+            {
+                _server.Mars.Data.Score += score;
+            }
+            else
+            {
+                _server.Earth.Data.Score += score;
+            }
         }
 
         _server.MainRef.Rpc(
@@ -94,6 +99,31 @@ public partial class PlanetServer : Area2D
 
     void ScoutHit(ScoutServer scout)
     {
+        if (!Data.ShieldUp)
+        {
+            int score = Data.Damage(Scout.KamikazeDamage);
+
+            if (Data.Faction == Faction.Earth)
+            {
+                _server.Mars.Data.Score += score;
+            }
+            else
+            {
+                _server.Earth.Data.Score += score;
+            }
+        }
+
+        scout.Data.Health = 0;
+        scout.Data.CurrentState = Scout.State.Dead;
+        scout.Die();
+
+        _server.MainRef.Rpc(
+            Main.MethodName.PlanetScoutHit,
+            _server.Earth.Data.Score,
+            _server.Mars.Data.Score,
+            scout.Data.Serialize(),
+            Data.Serialize()
+        );
     }
 
     void Regen()
