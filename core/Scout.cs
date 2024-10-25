@@ -20,8 +20,8 @@ public class Scout
     // Constants
 
     public const float ThrustMain = 600;
-    public const float ThrustForwardAxis = 300;
-    public const float ThrustSideAxis = 300;
+    public const float ThrustForwardAxis = ThrustMain;
+    public const float ThrustSideAxis = ThrustMain;
     public const float CorrectionThrust = 200;
     public const float ShootDelay = 0.16f;
     public const float ShootBulletSpeed = 1100f;
