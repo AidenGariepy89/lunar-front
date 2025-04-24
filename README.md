@@ -2,7 +2,9 @@
 Lunar Front is a small indie multiplayer 2D-shooter. The goal of the player is to destroy as many spaceships of the other team as possible and damage the enemy's planet. 
 
 ## Usage
-To run a client, simply run the release build on your platform of choice. If you'd like to run a server, run the same build with the arguments --server and --headless. If you wish to build your own copy from the source code, you must install Godot (at least V4.3) and use that to compile the project.
+To run a client, simply run the release build on your platform of choice.
+If you'd like to run a server, run the same build with the arguments --server and --headless.
+If you wish to build your own copy from the source code, you must install Godot (we used V4.3 Mono) and use that to compile the project.
 
 ## License
 Lunar Front
